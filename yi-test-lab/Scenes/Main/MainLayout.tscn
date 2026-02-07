@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c3w2hxyibl8r3"]
 
 [ext_resource type="Script" uid="uid://f1wx3slx2hko" path="res://Scripts/UI/MainLayout.cs" id="1_op3r0"]
+[ext_resource type="PackedScene" uid="uid://bw3k1xm4ilgr6" path="res://Scenes/Modules/Module_WuXing.tscn" id="2_j2tdx"]
 
 [node name="MainLayout" type="Control" unique_id=1259651162]
 layout_mode = 3
@@ -87,13 +88,6 @@ size_flags_horizontal = 3
 current_tab = 0
 tabs_visible = false
 
-[node name="WUXING" type="Label" parent="AppSplit/ContentTabs" unique_id=641206913]
+[node name="ModuleWuXing" parent="AppSplit/ContentTabs" unique_id=437482913 instance=ExtResource("2_j2tdx")]
 layout_mode = 2
-text = "PLACEHOLDER_WUXING"
 metadata/_tab_index = 0
-
-[node name="GANZHI" type="Label" parent="AppSplit/ContentTabs" unique_id=2133862242]
-visible = false
-layout_mode = 2
-text = "PLACEHOLDER_GANZHI"
-metadata/_tab_index = 1

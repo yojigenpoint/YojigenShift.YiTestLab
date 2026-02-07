@@ -1,5 +1,6 @@
 using Godot;
 using System.Globalization;
+using YojigenShift.YiFramework.Core;
 
 public partial class MainLayout : Node
 {
@@ -23,6 +24,7 @@ public partial class MainLayout : Node
 		_btnGanzhi.Pressed += () => SwitchTab(1);
 
 		TranslationServer.SetLocale("zh_CN");
+		YiLocalization.CurrentLanguage = "zh_CN";
 		_langSelector.Selected = 0;
 	}
 
@@ -31,12 +33,17 @@ public partial class MainLayout : Node
 		string langCode = index == 0 ? "zh_CN" : "en_US";
 
 		TranslationServer.SetLocale(langCode);
+		YiLocalization.CurrentLanguage = langCode;
 
 		var culture = new CultureInfo(langCode == "zh" ? "zh-CN" : "en-US");
 		CultureInfo.CurrentCulture = culture;
 		CultureInfo.CurrentUICulture = culture;
 
-		//ReloadCurrentTab();
+		foreach (Node child in _contentTabs.GetChildren())
+		{
+			if (child is WuXingModule module)
+				module.RefreshLocalization();
+		}
 	}
 
 	private void SwitchTab(int index)

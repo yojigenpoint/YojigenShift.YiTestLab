@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://4k7tijvi360i"]
+
+[ext_resource type="Script" uid="uid://o3ivrmsr6rq0" path="res://Scripts/UI/ElementCard.cs" id="1_tulid"]
+
+[node name="ElementCard" type="PanelContainer" unique_id=742448295]
+custom_minimum_size = Vector2(200, 250)
+script = ExtResource("1_tulid")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=323250475]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Label_Title" type="Label" parent="VBoxContainer" unique_id=463244415]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1556570418]
+layout_mode = 2
+
+[node name="Label_Generates" type="Label" parent="VBoxContainer" unique_id=2111694539]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label_Overcomes" type="Label" parent="VBoxContainer" unique_id=1303971927]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label_Generatedby" type="Label" parent="VBoxContainer" unique_id=485390357]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label_Overcomeby" type="Label" parent="VBoxContainer" unique_id=369870520]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
