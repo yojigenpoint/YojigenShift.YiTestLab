@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://f1wx3slx2hko" path="res://Scripts/UI/MainLayout.cs" id="1_op3r0"]
 [ext_resource type="PackedScene" uid="uid://bw3k1xm4ilgr6" path="res://Scenes/Modules/Module_WuXing.tscn" id="2_j2tdx"]
+[ext_resource type="PackedScene" uid="uid://dyqt1de0inc6" path="res://Scenes/Modules/Module_GanZhi.tscn" id="3_dti5e"]
 
 [node name="MainLayout" type="Control" unique_id=1259651162]
 layout_mode = 3
@@ -91,3 +92,8 @@ tabs_visible = false
 [node name="ModuleWuXing" parent="AppSplit/ContentTabs" unique_id=437482913 instance=ExtResource("2_j2tdx")]
 layout_mode = 2
 metadata/_tab_index = 0
+
+[node name="ModuleGanZhi" parent="AppSplit/ContentTabs" unique_id=1241401279 instance=ExtResource("3_dti5e")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1

@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://dyqt1de0inc6"]
+
+[ext_resource type="Script" uid="uid://dnbrricgjlilq" path="res://Scripts/Modules/GanzhiModule.cs" id="1_ceqon"]
+[ext_resource type="PackedScene" uid="uid://b47ncmxxa7ivd" path="res://Scenes/Modules/CharacterTiles.tscn" id="2_ldmdl"]
+
+[node name="ModuleGanZhi" type="Control" unique_id=1241401279]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ceqon")
+TilePrefab = ExtResource("2_ldmdl")
+
+[node name="TabContainer" type="TabContainer" parent="." unique_id=1071656205]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+tab_0/title = "TAB_STEMS"
+tab_1/title = "TAB_BRANCHES"
+tab_2/title = "TAB_JIAZI"
+
+[node name="Tab_Stems" type="ScrollContainer" parent="TabContainer" unique_id=288609101]
+layout_mode = 2
+metadata/_tab_index = 0
+metadata/_tab_name = "TAB_STEMS"
+
+[node name="Grid" type="GridContainer" parent="TabContainer/Tab_Stems" unique_id=863945865]
+layout_mode = 2
+columns = 5
+
+[node name="Tab_Branches" type="ScrollContainer" parent="TabContainer" unique_id=1628363414]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+metadata/_tab_name = "TAB_BRANCHES"
+
+[node name="Grid" type="GridContainer" parent="TabContainer/Tab_Branches" unique_id=632540579]
+layout_mode = 2
+columns = 4
+
+[node name="Tab_JiaZi" type="ScrollContainer" parent="TabContainer" unique_id=1370353609]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+metadata/_tab_name = "TAB_JIAZI"
+
+[node name="Grid" type="GridContainer" parent="TabContainer/Tab_JiaZi" unique_id=1856401628]
+layout_mode = 2
+columns = 6

@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using YojigenShift.YiFramework.Enums;
 using YojigenShift.YiFramework.Extensions;
 
@@ -37,26 +36,6 @@ public partial class ElementCard : PanelContainer
 		_lblOvercomes.Text = $"{_currentType.Prisoner().GetLocalizedName()}";
 		_lblOvercomeby.Text = $"{_currentType.Bane().GetLocalizedName()}";
 
-		Modulate = GetColorForWuXing(_currentType);
-	}
-
-	private Color GetColorForWuXing(WuXingType type)
-	{
-		switch (type)
-		{
-			case WuXingType.Wood:
-				return Colors.ForestGreen;
-			case WuXingType.Fire:
-				return Colors.OrangeRed;
-			case WuXingType.Earth:
-				return Colors.SandyBrown;
-			case WuXingType.Metal:
-				return Colors.Silver;
-			case WuXingType.Water:
-				return Colors.DeepSkyBlue;
-			case WuXingType.None:
-			default:
-				return Colors.Red;
-		}
+		Modulate = Helpers.GetColorForWuXing(_currentType);
 	}
 }

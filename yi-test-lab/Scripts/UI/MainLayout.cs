@@ -41,8 +41,10 @@ public partial class MainLayout : Node
 
 		foreach (Node child in _contentTabs.GetChildren())
 		{
-			if (child is WuXingModule module)
-				module.RefreshLocalization();
+			if (child is WuXingModule wuxing)
+				wuxing.RefreshLocalization();
+			else if (child is GanzhiModule ganzhi)
+				ganzhi.RefreshLocalization();
 		}
 	}
 
