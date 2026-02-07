@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://bdb3kd6g57nl6"]
+
+[ext_resource type="Script" uid="uid://b5jjhmldsnumn" path="res://Scripts/Modules/BaziModule.cs" id="1_kax15"]
+[ext_resource type="PackedScene" uid="uid://r2ftusd4xdt8" path="res://Scenes/Modules/PillarView.tscn" id="2_gbuac"]
+
+[node name="ModuleBazi" type="Control" unique_id=54464214]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kax15")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1788349518]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InputArea" type="PanelContainer" parent="VBoxContainer" unique_id=1322785776]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/InputArea" unique_id=1557021760]
+layout_mode = 2
+
+[node name="Label_SC" type="Label" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=2008999323]
+layout_mode = 2
+
+[node name="Input_Year" type="SpinBox" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=1625893258]
+layout_mode = 2
+min_value = 1900.0
+max_value = 2100.0
+value = 2026.0
+
+[node name="Label_Year" type="Label" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=1044450558]
+layout_mode = 2
+
+[node name="Input_Month" type="SpinBox" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=932229551]
+layout_mode = 2
+min_value = 1.0
+max_value = 12.0
+value = 2.0
+
+[node name="Label_Month" type="Label" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=261286136]
+layout_mode = 2
+
+[node name="Input_Day" type="SpinBox" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=2055877875]
+layout_mode = 2
+min_value = 1.0
+max_value = 31.0
+value = 7.0
+
+[node name="Label_Day" type="Label" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=540255615]
+layout_mode = 2
+
+[node name="Input_Hour" type="SpinBox" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=940545481]
+layout_mode = 2
+max_value = 23.0
+
+[node name="Label_Hour" type="Label" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=1713911778]
+layout_mode = 2
+
+[node name="Btn_Plot" type="Button" parent="VBoxContainer/InputArea/HBoxContainer" unique_id=170352000]
+layout_mode = 2
+text = "Plot"
+
+[node name="ResultArea" type="HBoxContainer" parent="VBoxContainer" unique_id=1336854575]
+layout_mode = 2
+alignment = 1
+
+[node name="PillarView_Year" parent="VBoxContainer/ResultArea" unique_id=1200793290 instance=ExtResource("2_gbuac")]
+layout_mode = 2
+
+[node name="PillarView_Month" parent="VBoxContainer/ResultArea" unique_id=1901649369 instance=ExtResource("2_gbuac")]
+layout_mode = 2
+
+[node name="PillarView_Day" parent="VBoxContainer/ResultArea" unique_id=2113513414 instance=ExtResource("2_gbuac")]
+layout_mode = 2
+
+[node name="PillarView_Hour" parent="VBoxContainer/ResultArea" unique_id=615913234 instance=ExtResource("2_gbuac")]
+layout_mode = 2
+
+[node name="AnalysisArea" type="Panel" parent="VBoxContainer" unique_id=575363489]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AnalysisArea" unique_id=1413998883]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label_Strength" type="Label" parent="VBoxContainer/AnalysisArea/VBoxContainer" unique_id=1882937612]
+layout_mode = 2
+text = "T"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label_UsefulGod" type="Label" parent="VBoxContainer/AnalysisArea/VBoxContainer" unique_id=1601201049]
+layout_mode = 2
+text = "T"
+horizontal_alignment = 1
+vertical_alignment = 1

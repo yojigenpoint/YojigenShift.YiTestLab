@@ -6,8 +6,10 @@ public partial class MainLayout : Node
 {
 	private TabContainer _contentTabs;
 	private OptionButton _langSelector;
+
 	private Button _btnWuxing;
 	private Button _btnGanzhi;
+	private Button _btnBazi;
 
 	public override void _Ready()
 	{
@@ -17,11 +19,13 @@ public partial class MainLayout : Node
 
 		_btnWuxing = GetNode<Button>("AppSplit/Sidebar/Btn_WuXing");
 		_btnGanzhi = GetNode<Button>("AppSplit/Sidebar/Btn_GanZhi");
+		_btnBazi = GetNode<Button>("AppSplit/Sidebar/Btn_Bazi");
 
 		_langSelector.ItemSelected += OnLanugageChanged;
 
 		_btnWuxing.Pressed += () => SwitchTab(0);
 		_btnGanzhi.Pressed += () => SwitchTab(1);
+		_btnBazi.Pressed += () => SwitchTab(2);
 
 		TranslationServer.SetLocale("zh_CN");
 		YiLocalization.CurrentLanguage = "zh_CN";
@@ -45,6 +49,8 @@ public partial class MainLayout : Node
 				wuxing.RefreshLocalization();
 			else if (child is GanzhiModule ganzhi)
 				ganzhi.RefreshLocalization();
+			else if (child is BaziModule bazi)
+				bazi.RefreshLocalization();
 		}
 	}
 

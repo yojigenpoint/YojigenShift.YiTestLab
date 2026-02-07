@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://f1wx3slx2hko" path="res://Scripts/UI/MainLayout.cs" id="1_op3r0"]
 [ext_resource type="PackedScene" uid="uid://bw3k1xm4ilgr6" path="res://Scenes/Modules/Module_WuXing.tscn" id="2_j2tdx"]
 [ext_resource type="PackedScene" uid="uid://dyqt1de0inc6" path="res://Scenes/Modules/Module_GanZhi.tscn" id="3_dti5e"]
+[ext_resource type="PackedScene" uid="uid://bdb3kd6g57nl6" path="res://Scenes/Modules/Module_Bazi.tscn" id="4_wp4y2"]
 
 [node name="MainLayout" type="Control" unique_id=1259651162]
 layout_mode = 3
@@ -97,3 +98,8 @@ metadata/_tab_index = 0
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="ModuleBazi" parent="AppSplit/ContentTabs" unique_id=54464214 instance=ExtResource("4_wp4y2")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2

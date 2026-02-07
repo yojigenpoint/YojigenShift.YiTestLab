@@ -42,3 +42,4 @@ locale/translations=PackedStringArray("res://Resources/localization.en_US.transl
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+textures/vram_compression/import_s3tc_bptc=true
