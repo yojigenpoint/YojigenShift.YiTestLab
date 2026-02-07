@@ -1,0 +1,15 @@
+keys,zh_CN,en_US
+APP_TITLE,易学算法实验室,I Ching Algorithm Lab
+NAV_WUXING,1. 五行,1. Five Elements
+NAV_GANZHI,2. 天干 & 地支,2. Stems & Branches
+NAV_BAZI,3. 八字,3. Four Pillars
+NAV_NAMING,4. 五行姓名学,4. Naming (CN)
+NAV_BAGUA,5. 八卦,5. Eight Trigrams
+NAV_QIMEN,6. 奇门遁甲,6. Qi Men Dun Jia (WIP)
+NAV_64H,7. 六十四卦,7. 64 Hexagrams
+NAV_LIUYAO,8. 六爻,8. Six Lines
+NAV_MEIHUA,9. 梅花易数,9. Plum Blossom
+BTN_FEEDBACK,反馈问题,Report Bug
+PLACEHOLDER_WUXING,这里是五行功能区,Five Elements Module Area
+PLACEHOLDER_GANZHI,这里是干支功能区,Stems & Branches Module Area
+MSG_CN_ONLY,该功能仅支持中文环境,This feature is only available in Chinese

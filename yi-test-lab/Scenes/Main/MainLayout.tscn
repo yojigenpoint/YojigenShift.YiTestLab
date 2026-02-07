@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://c3w2hxyibl8r3"]
+
+[ext_resource type="Script" uid="uid://f1wx3slx2hko" path="res://Scripts/UI/MainLayout.cs" id="1_op3r0"]
+
+[node name="MainLayout" type="Control" unique_id=1259651162]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_op3r0")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1750474296]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.101960786, 0.101960786, 0.101960786, 1)
+
+[node name="AppSplit" type="HBoxContainer" parent="." unique_id=1790227149]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sidebar" type="VBoxContainer" parent="AppSplit" unique_id=1456997919]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="Btn_WuXing" type="Button" parent="AppSplit/Sidebar" unique_id=616999900]
+layout_mode = 2
+text = "NAV_WUXING"
+
+[node name="Btn_GanZhi" type="Button" parent="AppSplit/Sidebar" unique_id=838877602]
+layout_mode = 2
+text = "NAV_GANZHI"
+
+[node name="Btn_Bazi" type="Button" parent="AppSplit/Sidebar" unique_id=1631168113]
+layout_mode = 2
+text = "NAV_BAZI"
+
+[node name="Btn_Naming" type="Button" parent="AppSplit/Sidebar" unique_id=394617228]
+layout_mode = 2
+text = "NAV_NAMING"
+
+[node name="Btn_Bagua" type="Button" parent="AppSplit/Sidebar" unique_id=1713467313]
+layout_mode = 2
+text = "NAV_BAGUA"
+
+[node name="Btn_Qimen" type="Button" parent="AppSplit/Sidebar" unique_id=1188618157]
+layout_mode = 2
+text = "NAV_QIMEN"
+
+[node name="Btn_64Gua" type="Button" parent="AppSplit/Sidebar" unique_id=1455622721]
+layout_mode = 2
+text = "NAV_64H"
+
+[node name="Btn_LiuYao" type="Button" parent="AppSplit/Sidebar" unique_id=1257766521]
+layout_mode = 2
+text = "NAV_LIUYAO"
+
+[node name="Btn_MeiHua" type="Button" parent="AppSplit/Sidebar" unique_id=870112710]
+layout_mode = 2
+text = "NAV_MEIHUA"
+
+[node name="LanguageSelector" type="OptionButton" parent="AppSplit/Sidebar" unique_id=1005792532]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "中文"
+popup/item_0/id = 0
+popup/item_1/text = "English"
+popup/item_1/id = 1
+
+[node name="ContentTabs" type="TabContainer" parent="AppSplit" unique_id=1304091132]
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="WUXING" type="Label" parent="AppSplit/ContentTabs" unique_id=641206913]
+layout_mode = 2
+text = "PLACEHOLDER_WUXING"
+metadata/_tab_index = 0
+
+[node name="GANZHI" type="Label" parent="AppSplit/ContentTabs" unique_id=2133862242]
+visible = false
+layout_mode = 2
+text = "PLACEHOLDER_GANZHI"
+metadata/_tab_index = 1
