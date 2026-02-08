@@ -53,7 +53,6 @@ public partial class BaziModule : Control
 
 			DateTime utcTime = inputTime.ToUniversalTime();
 
-			// 注意：具体返回值结构请参考你的 DLL，这里假设返回 (YearPillar, MonthPillar, DayPillar, HourPillar)
 			var bazi = BaziPlotter.Plot(utcTime);
 
 			var result = BaziEvaluator.Evaluate((int)_year.Value, (int)_month.Value, (int)_day.Value, (int)_hour.Value);
@@ -61,10 +60,10 @@ public partial class BaziModule : Control
 			// 3. 更新 UI
 			// UpdateUI(bazi, result);
 
-			_pvYear.Setup("Year", GanZhiMath.GetStem(bazi.YearIdx), GanZhiMath.GetBranch(bazi.YearIdx), "Bi Jian", "Gui (Yin)");
-			_pvMonth.Setup("Month", GanZhiMath.GetStem(bazi.MonthIdx), GanZhiMath.GetBranch(bazi.MonthIdx), "Jie Cai", "Ji (Cai)");
-			_pvDay.Setup("Day", GanZhiMath.GetStem(bazi.DayIdx), GanZhiMath.GetBranch(bazi.DayIdx), "Day Master", "Jia (Yin)");
-			_pvHour.Setup("Hour", GanZhiMath.GetStem(bazi.HourIdx), GanZhiMath.GetBranch(bazi.YearIdx), "Shang Guan", "Yi (Yin)");
+			_pvYear.Setup("YEAR_PILLAR", bazi.YearIdx);
+            _pvYear.Setup("MONTH_PILLAR", bazi.MonthIdx);
+            _pvYear.Setup("DAY_PILLAR", bazi.DayIdx, GanZhiMath.GetStem(bazi.DayIdx));
+            _pvYear.Setup("TIME_PILLAR", bazi.HourIdx);
 
 			string strength = result.IsDayMasterStrong ? "STRONG" : "WEAK";
 			string usefulGods = "";

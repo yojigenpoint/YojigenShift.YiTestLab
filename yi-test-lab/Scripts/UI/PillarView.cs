@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using YojigenShift.YiFramework.Core;
 using YojigenShift.YiFramework.Enums;
 using YojigenShift.YiFramework.Extensions;
 
@@ -20,14 +21,22 @@ public partial class PillarView : VBoxContainer
 		_hidden = GetNode<Label>("Label_Hidden");
 	}
 
-	public void Setup(string title, HeavenlyStem s, EarthlyBranch b, string tenGodText, string hiddenText)
+	public void Setup(string title, int index, HeavenlyStem? dayMasterStem = null)
 	{
-		_title.Text = title;
-		_stem.Text = s.GetLocalizedName();
-		_branch.Text = b.GetLocalizedName();
-		_tenGods.Text = tenGodText;
-		_hidden.Text = hiddenText;
-	}
+		var stem = GanZhiMath.GetStem(index);
+		var branch = GanZhiMath.GetBranch(index);
+
+        _title.Text = title;
+		_stem.Text = stem.GetLocalizedName();
+		_branch.Text = branch.GetLocalizedName();
+		_tenGods.Text = dayMasterStem.HasValue ? 
+			"DAY_MASTER" : BaziHelpers.CalculateTenGod(dayMasterStem.Value, stem).ToString();
+
+		foreach(var hid in branch.GetHiddenStems())
+		{
+			_hidden.Text += hid.Stem.GetLocalizedName() + "\n";
+		}
+    }
 
 	public void Clear()
 	{
