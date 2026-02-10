@@ -26,7 +26,7 @@ public partial class PillarView : VBoxContainer
 		var stem = GanZhiMath.GetStem(index);
 		var branch = GanZhiMath.GetBranch(index);
 
-        _title.Text = title;
+		_title.Text = title;
 		_stem.Text = stem.GetLocalizedName();
 		_branch.Text = branch.GetLocalizedName();
 		_tenGods.Text = dayMasterStem.HasValue ? 
@@ -36,7 +36,7 @@ public partial class PillarView : VBoxContainer
 		{
 			_hidden.Text += hid.Stem.GetLocalizedName() + "\n";
 		}
-    }
+	}
 
 	public void Clear()
 	{

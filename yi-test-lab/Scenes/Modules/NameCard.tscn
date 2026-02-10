@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://dn65od4ypvp3x"]
+
+[ext_resource type="Script" uid="uid://dvls37set6f2l" path="res://Scripts/UI/NameCard.cs" id="1_ii14t"]
+
+[node name="NameCard" type="PanelContainer" unique_id=1295184078]
+custom_minimum_size = Vector2(0, 100)
+script = ExtResource("1_ii14t")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1629521497]
+layout_mode = 2
+
+[node name="Label_Name" type="Label" parent="HBoxContainer" unique_id=273497561]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=261099131]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=515125841]
+layout_mode = 2
+
+[node name="Label_Score" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=347535390]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.69803923, 0.13333334, 0.13333334, 1)
+
+[node name="Label_Pattern" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=1805519187]
+layout_mode = 2
+
+[node name="Label_Tags" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=354944395]
+layout_mode = 2

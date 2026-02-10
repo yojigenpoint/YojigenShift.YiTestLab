@@ -61,9 +61,9 @@ public partial class BaziModule : Control
 			// UpdateUI(bazi, result);
 
 			_pvYear.Setup("YEAR_PILLAR", bazi.YearIdx);
-            _pvYear.Setup("MONTH_PILLAR", bazi.MonthIdx);
-            _pvYear.Setup("DAY_PILLAR", bazi.DayIdx, GanZhiMath.GetStem(bazi.DayIdx));
-            _pvYear.Setup("TIME_PILLAR", bazi.HourIdx);
+			_pvYear.Setup("MONTH_PILLAR", bazi.MonthIdx);
+			_pvYear.Setup("DAY_PILLAR", bazi.DayIdx, GanZhiMath.GetStem(bazi.DayIdx));
+			_pvYear.Setup("TIME_PILLAR", bazi.HourIdx);
 
 			string strength = result.IsDayMasterStrong ? "STRONG" : "WEAK";
 			string usefulGods = "";
