@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://co8q1icadwdn3" path="res://Scripts/UI/GlobalUIController.cs" id="1_s00yu"]
 [ext_resource type="PackedScene" uid="uid://c1eeqfl3blj5h" path="res://Scenes/Modules/WuXingModule.tscn" id="2_hd34p"]
+[ext_resource type="PackedScene" uid="uid://buu2m6jsd5lg4" path="res://Scenes/Modules/GanZhiModule.tscn" id="3_hd34p"]
 
 [node name="MainUI" type="Control" unique_id=1259651162]
 layout_mode = 3
@@ -12,3 +13,4 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s00yu")
 WuXingScene = ExtResource("2_hd34p")
+GanZhiScene = ExtResource("3_hd34p")

@@ -27,6 +27,7 @@ namespace YojigenShift.YiTestLab.UI
 		};
 
 		[Export] public PackedScene WuXingScene { get; set; }
+		[Export] public PackedScene GanZhiScene { get; set; }
 			
 		public enum ModuleType { Interactive, Validation }
 
@@ -232,6 +233,10 @@ namespace YojigenShift.YiTestLab.UI
 				case "UI_MOD_WUXING":
 					targetScene = WuXingScene;
 					break;
+				case "UI_MOD_GANZHI":
+					targetScene = GanZhiScene;
+					break;
+
 			}
 
 			if (targetScene != null)

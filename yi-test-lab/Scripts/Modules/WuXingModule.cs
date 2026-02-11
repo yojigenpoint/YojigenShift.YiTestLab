@@ -2,6 +2,7 @@ using Godot;
 using System;
 using YojigenShift.YiFramework.Enums;
 using YojigenShift.YiFramework.Extensions;
+using YojigenShift.YiTestLab.Core;
 using YojigenShift.YiTestLab.UI;
 
 namespace YojigenShift.YiTestLab.Modules

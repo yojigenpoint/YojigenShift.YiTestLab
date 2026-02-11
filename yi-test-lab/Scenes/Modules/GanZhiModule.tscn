@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://buu2m6jsd5lg4"]
+
+[ext_resource type="Script" uid="uid://bn2bg4arupncj" path="res://Scripts/Modules/GanZhiModule.cs" id="1_3um8n"]
+
+[node name="GanZhiModule" type="VBoxContainer" unique_id=974212368]
+script = ExtResource("1_3um8n")

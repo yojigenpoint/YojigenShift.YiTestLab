@@ -1,15 +1,18 @@
 using Godot;
 
-public static class Helpers
+namespace YojigenShift.YiTestLab.Core
 {
-	public static string GetLocalizedFormat(string key, params object[] args)
+	public static class Helpers
 	{
-		string translated = TranslationServer.Translate(key).ToString();
-		if (args != null && args.Length > 0)
+		public static string GetLocalizedFormat(string key, params object[] args)
 		{
-			try { return string.Format(translated, args); }
-			catch { return translated; }
+			string translated = TranslationServer.Translate(key).ToString();
+			if (args != null && args.Length > 0)
+			{
+				try { return string.Format(translated, args); }
+				catch { return translated; }
+			}
+			return translated;
 		}
-		return translated;
 	}
 }
