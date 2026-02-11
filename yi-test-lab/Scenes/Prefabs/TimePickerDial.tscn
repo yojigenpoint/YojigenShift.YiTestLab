@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cpq88ccx3s61k"]
+
+[ext_resource type="Script" uid="uid://csyrgjsou5ymq" path="res://Scripts/UI/TimePickerDial.cs" id="1_tlbne"]
+
+[node name="TimePickerDial" type="Control" unique_id=1369133206]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_tlbne")

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c1eeqfl3blj5h"]
+
+[ext_resource type="Script" uid="uid://bahaimxwesaea" path="res://Scripts/Modules/WuXingModule.cs" id="1_codfx"]
+
+[node name="WuXingModule" type="VBoxContainer" unique_id=1051092420]
+script = ExtResource("1_codfx")

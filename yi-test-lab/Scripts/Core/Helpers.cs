@@ -1,25 +1,15 @@
 using Godot;
-using YojigenShift.YiFramework.Enums;
 
 public static class Helpers
-{    
-	public static Color GetColorForWuXing(WuXingType type)
+{
+	public static string GetLocalizedFormat(string key, params object[] args)
 	{
-		switch (type)
+		string translated = TranslationServer.Translate(key).ToString();
+		if (args != null && args.Length > 0)
 		{
-			case WuXingType.Wood:
-				return Colors.ForestGreen;
-			case WuXingType.Fire:
-				return Colors.OrangeRed;
-			case WuXingType.Earth:
-				return Colors.SandyBrown;
-			case WuXingType.Metal:
-				return Colors.Silver;
-			case WuXingType.Water:
-				return Colors.DeepSkyBlue;
-			case WuXingType.None:
-			default:
-				return Colors.Red;
+			try { return string.Format(translated, args); }
+			catch { return translated; }
 		}
+		return translated;
 	}
 }
