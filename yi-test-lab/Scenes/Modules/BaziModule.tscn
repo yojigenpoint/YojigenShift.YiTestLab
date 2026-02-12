@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://chv3hqlvm1tuo"]
+
+[ext_resource type="Script" uid="uid://lv58qm18rs81" path="res://Scripts/Modules/BaziModule.cs" id="1_l5fgb"]
+
+[node name="BaziModule" type="VBoxContainer" unique_id=1181074728]
+script = ExtResource("1_l5fgb")

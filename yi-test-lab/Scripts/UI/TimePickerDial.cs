@@ -8,85 +8,94 @@ namespace YojigenShift.YiTestLab.UI
 		[Export] public string LabelText = "TP_YEAR";
 		[Export] public int MinValue = 1900;
 		[Export] public int MaxValue = 2100;
-		[Export] public int CurrentValue = 2026;
 
-		private Label _label;
-		private ScrollContainer _scroll;
-		private VBoxContainer _list;
-		private LineEdit _manualInput;
-		private bool _isEditing = false;
+		public int Value { get; private set; }
+
+		public event Action<int> ValueChanged;
+
+		private Label _lblTitle;
+		private Label _lblValue;
+		private Button _btnUp;
+		private Button _btnDown;
 
 		public override void _Ready()
 		{
-			CustomMinimumSize = new Vector2(180, 220);
+			CustomMinimumSize = new Vector2(140, 200);
 
 			var vBox = new VBoxContainer();
 			vBox.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 			AddChild(vBox);
 
-			// 1. Label
-			_label = new Label { Text = LabelText, HorizontalAlignment = HorizontalAlignment.Center };
-			_label.AddThemeFontSizeOverride("font_size", 32);
-			vBox.AddChild(_label);
-
-			// 2. Container
-			_scroll = new ScrollContainer
+			// 1. Title
+			_lblTitle = new Label
 			{
-				CustomMinimumSize = new Vector2(0, 150),
-				HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
-				VerticalScrollMode = ScrollContainer.ScrollMode.ShowNever
+				Text = LabelText,
+				HorizontalAlignment = HorizontalAlignment.Center
 			};
-			vBox.AddChild(_scroll);
+			_lblTitle.AddThemeColorOverride("font_color", GlobalUIController.ColorTextSecondary);
+			vBox.AddChild(_lblTitle);
 
-			_list = new VBoxContainer();
-			_scroll.AddChild(_list);
+			// 2. Up button (+)
+			_btnUp = CreateArrowButton("▲");
+			_btnUp.Pressed += () => ChangeValue(1);
+			vBox.AddChild(_btnUp);
 
-			PopulateNumbers();
-
-			// 3. Hidden input
-			_manualInput = new LineEdit
+			// 3. Display
+			_lblValue = new Label
 			{
-				Visible = false,
-				Alignment = HorizontalAlignment.Center,
-				CustomMinimumSize = new Vector2(0, 80)
+				Text = Value.ToString("00"),
+				HorizontalAlignment = HorizontalAlignment.Center,
+				VerticalAlignment = VerticalAlignment.Center
 			};
-			_manualInput.TextSubmitted += OnManualInputSubmitted;
-			vBox.AddChild(_manualInput);
+			_lblValue.SizeFlagsVertical = SizeFlags.ExpandFill;
+			_lblValue.AddThemeFontSizeOverride("font_size", 40);
+			vBox.AddChild(_lblValue);
+
+			// 4. Down button (-)
+			_btnDown = CreateArrowButton("▼");
+			_btnDown.Pressed += () => ChangeValue(-1);
+			vBox.AddChild(_btnDown);
 		}
 
-		private void PopulateNumbers()
+		public void SetValue(int val, bool notify = false)
 		{
-			for (int i = MinValue; i <= MaxValue; i++)
-			{
-				var lbl = new Button
-				{
-					Text = i.ToString(),
-					Flat = true,
-					CustomMinimumSize = new Vector2(0, 60)
-				};
-				lbl.Pressed += () => StartManualInput();
-				_list.AddChild(lbl);
-			}
+			Value = Math.Clamp(val, MinValue, MaxValue);
+			UpdateDisplay();
+			if (notify) ValueChanged?.Invoke(Value);
 		}
 
-		private void StartManualInput()
+		public void SetRange(int min, int max)
 		{
-			_isEditing = true;
-			_scroll.Visible = false;
-			_manualInput.Visible = true;
-			_manualInput.Text = CurrentValue.ToString();
-			_manualInput.GrabFocus();
+			MinValue = min;
+			MaxValue = max;
+			if (Value < MinValue) SetValue(MinValue, true);
+			else if (Value > MaxValue) SetValue(MaxValue, true);
 		}
 
-		private void OnManualInputSubmitted(string text)
+		private void ChangeValue(int delta)
 		{
-			if (int.TryParse(text, out int val))
-			{
-				CurrentValue = Math.Clamp(val, MinValue, MaxValue);
-			}
-			_isEditing = false;
-			_scroll.Visible = true;
-			_manualInput.Visible = false;
+			int newVal = Value + delta;
+			
+			if (newVal > MaxValue) newVal = MinValue;
+			if (newVal < MinValue) newVal = MaxValue;
+
+			Value = newVal;
+			UpdateDisplay();
+			ValueChanged?.Invoke(Value);
+		}
+
+		private void UpdateDisplay()
+		{
+			if (_lblValue != null)
+				_lblValue.Text = Value.ToString("00");
+		}
+
+		private Button CreateArrowButton(string icon)
+		{
+			var btn = new Button { Text = icon, Flat = true, FocusMode = FocusModeEnum.None };
+			btn.AddThemeColorOverride("font_color", GlobalUIController.ColorTextPrimary);
+			btn.AddThemeColorOverride("font_hover_color", GlobalUIController.ColorAccent);
+			return btn;
 		}
 	}
 }

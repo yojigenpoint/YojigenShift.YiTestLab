@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using YojigenShift.YiFramework.Core;
@@ -14,6 +15,7 @@ namespace YojigenShift.YiTestLab.UI
 		public static readonly Color ColorSurface = new Color("#1E1E1E");
 		public static readonly Color ColorOutline = new Color("#333333");
 		public static readonly Color ColorTextPrimary = new Color("#E0E0E0");
+		public static readonly Color ColorTextSecondary = new Color("#9E9E9E");
 		public static readonly Color ColorAccent = new Color("#03DAC6"); // i18n highlight
 
 		// Colors reflection of five elements
@@ -26,9 +28,16 @@ namespace YojigenShift.YiTestLab.UI
 			{ WuXingType.Water, new Color("#0096D6") }
 		};
 
+		#region Modules
+		[Export] public PackedScene TimeDialScene { get; set; }
+		[Export] public PackedScene BaziScene { get; set; }
 		[Export] public PackedScene WuXingScene { get; set; }
 		[Export] public PackedScene GanZhiScene { get; set; }
-			
+		#endregion
+
+		public event Action<DateTime> GlobalTimeChanged;
+		public DateTime CurrentTime { get; private set; } = DateTime.Now;
+
 		public enum ModuleType { Interactive, Validation }
 
 		private class ModuleConfig
@@ -69,6 +78,9 @@ namespace YojigenShift.YiTestLab.UI
 
 		private bool _isEnglish = false;
 		private string _currentModuleId = "UI_MOD_WUXING";
+
+		private TimePickerDial _dialYear, _dialMonth, _dialDay, _dialHour, _dialMinute;
+		private CheckButton _genderSwitch;
 
 		#endregion
 
@@ -132,18 +144,11 @@ namespace YojigenShift.YiTestLab.UI
 			_mainVBox.AddChild(_mainHeader);
 
 			// --- 2. Sub Header ---
-			_subHeader = CreatePanel("SubHeader", 300);
-
-			var subLabel = new Label
-			{
-				Text = "[ Time Picker & Gender Toggle Placeholder ]",
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center
-			};
-			subLabel.AddThemeColorOverride("font_color", ColorTextPrimary.Darkened(0.5f));
-			_subHeader.AddChild(subLabel);
-
+			_subHeader = CreatePanel("SubHeader", 320);
+			_subHeader.Visible = false;
 			_mainVBox.AddChild(_subHeader);
+
+			SetupTimeInputArea();
 
 			// --- 3. Body ---
 			_bodyContent = new ScrollContainer();
@@ -155,6 +160,100 @@ namespace YojigenShift.YiTestLab.UI
 			_footer = CreatePanel("Footer", 160);
 			// TODO: Functional buttons
 			_mainVBox.AddChild(_footer);
+		}
+
+		private void SetupTimeInputArea()
+		{
+			var hBox = new HBoxContainer();
+			hBox.Alignment = BoxContainer.AlignmentMode.Center;
+			hBox.AddThemeConstantOverride("separation", 15);
+
+			var margin = new MarginContainer();
+			margin.AddThemeConstantOverride("margin_top", 20);
+			margin.AddThemeConstantOverride("margin_bottom", 20);
+			margin.AddChild(hBox);
+			_subHeader.AddChild(margin);
+
+			// 1. Gender
+			var vBoxGender = new VBoxContainer();
+			vBoxGender.Alignment = BoxContainer.AlignmentMode.Center;
+			var lblGender = new Label { Text = "TXT_GENDER_TITLE" };
+			_genderSwitch = new CheckButton { Text = "TXT_GENDER_MALE" };
+			_genderSwitch.Pressed += () => {
+				_genderSwitch.Text = _genderSwitch.ButtonPressed ? "TXT_GENDER_FEMALE" : "TXT_GENDER_MALE";
+				// TODO: event for changing the gender
+			};
+			vBoxGender.AddChild(lblGender);
+			vBoxGender.AddChild(_genderSwitch);
+			hBox.AddChild(vBoxGender);
+						
+			hBox.AddChild(new VSeparator());
+
+			// 2. Initialize 5 dials
+
+			_dialYear = CreateDial("TXT_TIME_YEAR", 1900, 2100, CurrentTime.Year, hBox);
+			_dialMonth = CreateDial("TXT_TIME_MONTH", 1, 12, CurrentTime.Month, hBox);
+			_dialDay = CreateDial("TXT_TIME_DAY", 1, 31, CurrentTime.Day, hBox);
+
+			hBox.AddChild(new VSeparator());
+
+			_dialHour = CreateDial("TXT_TIME_HOUR", 0, 23, CurrentTime.Hour, hBox);
+			_dialMinute = CreateDial("TXT_TIME_MIN", 0, 59, CurrentTime.Minute, hBox);
+		}
+
+		private TimePickerDial CreateDial(string label, int min, int max, int current, Container parent)
+		{
+			TimePickerDial dial;
+			if (TimeDialScene != null)
+			{
+				dial = TimeDialScene.Instantiate<TimePickerDial>();
+			}
+			else
+			{
+				dial = new TimePickerDial();
+			}
+
+			dial.LabelText = label;
+			dial.MinValue = min;
+			dial.MaxValue = max;
+			dial.SetValue(current); 
+
+			dial.ValueChanged += (val) => OnDateDialChanged(); 
+			parent.AddChild(dial);
+			return dial;
+		}
+
+		private void OnDateDialChanged()
+		{
+			// 1. Get current values
+			int y = _dialYear.Value;
+			int m = _dialMonth.Value;
+			int d = _dialDay.Value;
+			int h = _dialHour.Value;
+			int min = _dialMinute.Value;
+
+			// 2. Validate Date
+			int daysInMonth = DateTime.DaysInMonth(y, m);
+			if (d > daysInMonth)
+			{
+				d = daysInMonth;
+				_dialDay.SetValue(d, false);
+			}
+			_dialDay.SetRange(1, daysInMonth);
+
+			// 3. New DateTime
+			try
+			{
+				var newTime = new DateTime(y, m, d, h, min, 0, DateTimeKind.Utc);
+				CurrentTime = newTime;
+
+				// 4. Broadcast
+				GlobalTimeChanged?.Invoke(CurrentTime);
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"Invalid Date: {y}-{m}-{d} " + ex.Message);
+			}
 		}
 
 		private void RefreshModuleSelector()
@@ -230,13 +329,15 @@ namespace YojigenShift.YiTestLab.UI
 
 			switch (moduleId)
 			{
+				case "UI_MOD_BAZI":
+					targetScene = BaziScene;
+					break;
 				case "UI_MOD_WUXING":
 					targetScene = WuXingScene;
 					break;
 				case "UI_MOD_GANZHI":
 					targetScene = GanZhiScene;
 					break;
-
 			}
 
 			if (targetScene != null)
