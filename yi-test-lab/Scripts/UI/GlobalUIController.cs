@@ -35,6 +35,9 @@ namespace YojigenShift.YiTestLab.UI
 		[Export] public PackedScene GanZhiScene { get; set; }
 		#endregion
 
+		public event Action<bool> GenderChanged;
+		public bool IsMale { get; private set; } = true;
+
 		public event Action<DateTime> GlobalTimeChanged;
 		public DateTime CurrentTime { get; private set; } = DateTime.Now;
 
@@ -58,7 +61,7 @@ namespace YojigenShift.YiTestLab.UI
 			new ModuleConfig { Id = "UI_MOD_WUXING", TrKey = "MOD_WUXING", Type = ModuleType.Validation },
 			new ModuleConfig { Id = "UI_MOD_GANZHI", TrKey = "MOD_GANZHI", Type = ModuleType.Validation },
 			new ModuleConfig { Id = "UI_MOD_TRIGRAM", TrKey = "MOD_TRIGRAM", Type = ModuleType.Validation },
-			new ModuleConfig { Id = "UI_MOD_HEAGRAM", TrKey = "MOD_HEAGRAM", Type = ModuleType.Validation }
+			new ModuleConfig { Id = "UI_MOD_HEXAGRAM", TrKey = "MOD_HEXAGRAM", Type = ModuleType.Validation }
 		};
 
 		#endregion
@@ -80,7 +83,7 @@ namespace YojigenShift.YiTestLab.UI
 		private string _currentModuleId = "UI_MOD_WUXING";
 
 		private TimePickerDial _dialYear, _dialMonth, _dialDay, _dialHour, _dialMinute;
-		private CheckButton _genderSwitch;
+		private Button _genderBtn;
 
 		#endregion
 
@@ -91,6 +94,8 @@ namespace YojigenShift.YiTestLab.UI
 			SetupLayout();
 
 			SyncLanguageState();
+
+			UpdateGenderButtonVisuals();
 
 			RefreshModuleSelector();
 
@@ -130,6 +135,9 @@ namespace YojigenShift.YiTestLab.UI
 			_moduleSelector = new OptionButton();
 			_moduleSelector.SizeFlagsHorizontal = SizeFlags.ExpandFill;
 			_moduleSelector.AddThemeFontSizeOverride("font_size", 40);
+			var popup = _moduleSelector.GetPopup();
+			popup.AddThemeFontSizeOverride("font_size", 35);
+
 			_moduleSelector.ItemSelected += OnModuleSelected;
 			headerHBox.AddChild(_moduleSelector);
 
@@ -175,17 +183,15 @@ namespace YojigenShift.YiTestLab.UI
 			_subHeader.AddChild(margin);
 
 			// 1. Gender
-			var vBoxGender = new VBoxContainer();
-			vBoxGender.Alignment = BoxContainer.AlignmentMode.Center;
-			var lblGender = new Label { Text = "TXT_GENDER_TITLE" };
-			_genderSwitch = new CheckButton { Text = "TXT_GENDER_MALE" };
-			_genderSwitch.Pressed += () => {
-				_genderSwitch.Text = _genderSwitch.ButtonPressed ? "TXT_GENDER_FEMALE" : "TXT_GENDER_MALE";
-				// TODO: event for changing the gender
+			_genderBtn = new Button
+			{
+				CustomMinimumSize = new Vector2(160, 200),
+				ToggleMode = true,
+				FocusMode = FocusModeEnum.None
 			};
-			vBoxGender.AddChild(lblGender);
-			vBoxGender.AddChild(_genderSwitch);
-			hBox.AddChild(vBoxGender);
+			_genderBtn.AddThemeFontSizeOverride("font_size", 40);
+			_genderBtn.Pressed += OnGenderToggled;
+			hBox.AddChild(_genderBtn);
 						
 			hBox.AddChild(new VSeparator());
 
@@ -200,6 +206,32 @@ namespace YojigenShift.YiTestLab.UI
 			_dialHour = CreateDial("TXT_TIME_HOUR", 0, 23, CurrentTime.Hour, hBox);
 			_dialMinute = CreateDial("TXT_TIME_MIN", 0, 59, CurrentTime.Minute, hBox);
 		}
+
+		private void OnGenderToggled()
+		{
+			bool isFemale = _genderBtn.ButtonPressed;
+			IsMale = !isFemale;
+
+			UpdateGenderButtonVisuals();
+
+			GenderChanged?.Invoke(IsMale);
+		}
+
+
+		private void UpdateGenderButtonVisuals()
+		{
+			if (IsMale)
+			{
+				_genderBtn.Text = Tr("TXT_GENDER_MALE");
+				_genderBtn.Modulate = Colors.White;
+			}
+			else
+			{
+				_genderBtn.Text = Tr("TXT_GENDER_FEMALE");
+				_genderBtn.Modulate = new Color("#FF80AB");
+			}
+		}
+
 
 		private TimePickerDial CreateDial(string label, int min, int max, int current, Container parent)
 		{

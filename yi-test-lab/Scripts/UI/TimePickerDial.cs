@@ -33,6 +33,7 @@ namespace YojigenShift.YiTestLab.UI
 				HorizontalAlignment = HorizontalAlignment.Center
 			};
 			_lblTitle.AddThemeColorOverride("font_color", GlobalUIController.ColorTextSecondary);
+			_lblTitle.AddThemeFontSizeOverride("font_size", 25);
 			vBox.AddChild(_lblTitle);
 
 			// 2. Up button (+)

@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System;
 using System.Text;
 using YojigenShift.YiFramework.Core;
@@ -9,60 +10,58 @@ using YojigenShift.YiTestLab.UI;
 
 public partial class BaziModule : VBoxContainer
 {
+	private GlobalUIController _globalUIController;
+	private DateTime _birthTime = DateTime.UtcNow;
+	private bool _isMale = true;
+
 	private HBoxContainer _pillarsContainer;
+	private HBoxContainer _dayunContainer;
+	private GridContainer _liunianGrid;
 	private RichTextLabel _analysisLabel;
 
-	private GlobalUIController _globalUIController;
+	private (HeavenlyStem YS, EarthlyBranch YB, HeavenlyStem MS, EarthlyBranch MB) _cacheChart;
+	private Dictionary<int, int> _dayunStartYears = new Dictionary<int, int>();
+	private int _selectedDayunIndex = -1;
 
 	public override void _Ready()
 	{
-		_globalUIController = GetNode<Control>("/root/MainUI") as GlobalUIController;
-
-		if (_globalUIController == null)
-			_globalUIController = this.FindParent("MainUI") as GlobalUIController;
-
 		Name = "BaziModule";
 		AddThemeConstantOverride("separation", 20);
 
-		SetupHeader();
+		_globalUIController = GetNode<Control>("/root/MainUI") as GlobalUIController;
+		if (_globalUIController == null)
+			_globalUIController = this.FindParent("MainUI") as GlobalUIController;
 
-		SetupPillarsArea();
-
-		SetupAnalysisArea();
+		SetupUI();
 
 		if (_globalUIController != null)
 		{
-			UpdateChart(_globalUIController.CurrentTime);
-			_globalUIController.GlobalTimeChanged += UpdateChart;
+			_birthTime = _globalUIController.CurrentTime;
+			_isMale = _globalUIController.IsMale;
+
+			_globalUIController.GlobalTimeChanged += OnTimeChanged;
+			_globalUIController.GenderChanged += OnGenderChanged;
 		}
-		else
-		{
-			UpdateChart(DateTime.UtcNow);
-		}
+
+		RefreshAll();
 	}
 
 	public override void _ExitTree()
 	{
 		if (_globalUIController != null)
-			_globalUIController.GlobalTimeChanged -= UpdateChart;
+		{
+			_globalUIController.GlobalTimeChanged -= OnTimeChanged;
+			_globalUIController.GenderChanged -= OnGenderChanged;
+		}
 	}
 
-	public void UpdateChart(DateTime utcTime)
+	private void SetupUI()
 	{
-		try
-		{
-			var (yIdx, mIdx, dIdx, hIdx) = BaziPlotter.Plot(utcTime);
-
-			var result = BaziEvaluator.Evaluate(yIdx, mIdx, dIdx, hIdx);
-
-			RenderPillars(yIdx, mIdx, dIdx, hIdx);
-			RenderAnalysis(result);
-		}
-		catch (Exception ex)
-		{
-			GD.PrintErr($"Bazi Plot Error: {ex.Message}");
-			_analysisLabel.Text = $"[center][color=red]Error calculating chart: {ex.Message}[/color][/center]";
-		}
+		SetupHeader();
+		SetupPillarsArea();
+		SetupDaYunArea();
+		SetupLiuNianArea();
+		SetupAnalysisArea();
 	}
 
 	private void SetupHeader()
@@ -84,6 +83,48 @@ public partial class BaziModule : VBoxContainer
 		_pillarsContainer = new HBoxContainer();
 		_pillarsContainer.AddThemeConstantOverride("separation", 15);
 		centerContainer.AddChild(_pillarsContainer);
+	}
+
+	private void SetupDaYunArea()
+	{
+		var panel = new PanelContainer();
+		var style = new StyleBoxFlat { BgColor = GlobalUIController.ColorSurface.Darkened(0.2f), ContentMarginTop = 10, ContentMarginBottom = 10 };
+		panel.AddThemeStyleboxOverride("panel", style);
+
+		var vBox = new VBoxContainer();
+		panel.AddChild(vBox);
+
+		var lblTitle = new Label { Text = "TXT_DAYUN_TITLE", HorizontalAlignment = HorizontalAlignment.Center };
+		lblTitle.AddThemeColorOverride("font_color", GlobalUIController.ColorTextSecondary);
+		vBox.AddChild(lblTitle);
+
+		var scroll = new ScrollContainer { VerticalScrollMode = ScrollContainer.ScrollMode.Disabled, CustomMinimumSize = new Vector2(0, 160) };
+		vBox.AddChild(scroll);
+
+		_dayunContainer = new HBoxContainer();
+		_dayunContainer.Alignment = BoxContainer.AlignmentMode.Center;
+		_dayunContainer.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+		_dayunContainer.AddThemeConstantOverride("separation", 10);
+		scroll.AddChild(_dayunContainer);
+
+		AddChild(panel);
+	}
+
+	private void SetupLiuNianArea()
+	{
+		var center = new CenterContainer();
+		_liunianGrid = new GridContainer { Columns = 5 };
+		_liunianGrid.AddThemeConstantOverride("h_separation", 15);
+		_liunianGrid.AddThemeConstantOverride("v_separation", 15);
+		_liunianGrid.Visible = false; 
+
+		var margin = new MarginContainer();
+		margin.AddThemeConstantOverride("margin_top", 10);
+		margin.AddThemeConstantOverride("margin_bottom", 20);
+		margin.AddChild(_liunianGrid);
+
+		center.AddChild(margin);
+		AddChild(center);
 	}
 
 	private void SetupAnalysisArea()
@@ -112,6 +153,185 @@ public partial class BaziModule : VBoxContainer
 		AddChild(panel);
 	}
 
+	private void OnTimeChanged(DateTime time)
+	{
+		_birthTime = time;
+		_selectedDayunIndex = -1;
+		_liunianGrid.Visible = false;
+		RefreshAll();
+	}
+
+	private void OnGenderChanged(bool isMale)
+	{
+		_isMale = isMale;
+		_selectedDayunIndex = -1;
+		_liunianGrid.Visible = false;
+		RenderDaYun();
+	}
+
+	private void RefreshAll()
+	{
+		try
+		{
+			var (yIdx, mIdx, dIdx, hIdx) = BaziPlotter.Plot(_birthTime);
+
+			var ys = GanZhiMath.GetStem(yIdx);
+			var ms = GanZhiMath.GetStem(mIdx);
+			var mb = GanZhiMath.GetBranch(mIdx);
+			_cacheChart = (ys, GanZhiMath.GetBranch(yIdx), ms, mb);
+
+			RenderPillars(yIdx, mIdx, dIdx, hIdx);
+			RenderDaYun();
+
+			var result = BaziEvaluator.Evaluate(yIdx, mIdx, dIdx, hIdx);
+			RenderAnalysis(result);
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr(ex);
+		}
+	}
+
+	private void RenderDaYun()
+	{
+		foreach (Node child in _dayunContainer.GetChildren()) child.QueueFree();
+		_dayunStartYears.Clear();
+
+		var dyList = BaziHelpers.GetDayunSequence(_cacheChart.YS, _cacheChart.MS, _cacheChart.MB, _isMale);
+
+		int startAge = 3;
+		int birthYear = _birthTime.Year;
+
+		for (int i = 0; i < dyList.Count; i++)
+		{
+			var (stem, branch) = dyList[i];
+			int currentAge = startAge + i * 10;
+			int currentYear = birthYear + currentAge;
+
+			_dayunStartYears[i] = currentYear;
+
+			// 创建可点击的大运柱
+			var pillBtn = CreateClickableMiniPillar(stem, branch, currentAge, i);
+			_dayunContainer.AddChild(pillBtn);
+		}
+	}
+
+	private void RenderLiuNian(int daYunStartYear)
+	{
+		foreach (Node child in _liunianGrid.GetChildren()) child.QueueFree();
+		_liunianGrid.Visible = true;
+
+		for (int i = 0; i < 10; i++)
+		{
+			int year = daYunStartYear + i;
+
+			int age = (year - _birthTime.Year);
+
+			int ganZhiIdx = GanZhiMath.Mod60(year - 1984);
+
+			var stem = GanZhiMath.GetStem(ganZhiIdx);
+			var branch = GanZhiMath.GetBranch(ganZhiIdx);
+
+			var pill = CreateLiuNianPillar(stem, branch, year, age);
+			_liunianGrid.AddChild(pill);
+		}
+	}
+
+	private void OnDaYunClicked(int index)
+	{
+		_selectedDayunIndex = index;
+
+		foreach (var node in _dayunContainer.GetChildren())
+		{
+			if (node is Button btn)
+			{
+				bool isSelected = (int)btn.GetMeta("idx") == index;
+				btn.Flat = !isSelected;
+			}
+		}
+
+		if (_dayunStartYears.ContainsKey(index))
+		{
+			RenderLiuNian(_dayunStartYears[index]);
+		}
+	}
+
+	private Button CreateClickableMiniPillar(HeavenlyStem s, EarthlyBranch b, int age, int index)
+	{
+		var btn = new Button
+		{
+			CustomMinimumSize = new Vector2(100, 140),
+			ToggleMode = true,
+			Flat = (_selectedDayunIndex != index)
+		};
+		btn.SetMeta("idx", index);
+
+		var vBox = new VBoxContainer();
+		vBox.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+		vBox.MouseFilter = Control.MouseFilterEnum.Ignore; 
+		btn.AddChild(vBox);
+
+		var lblS = new Label { Text = s.GetLocalizedName(), HorizontalAlignment = HorizontalAlignment.Center };
+		lblS.AddThemeColorOverride("font_color", GlobalUIController.GetElementColor(s.GetWuXing()));
+		lblS.AddThemeFontSizeOverride("font_size", 24);
+		vBox.AddChild(lblS);
+
+		var lblB = new Label { Text = b.GetLocalizedName(), HorizontalAlignment = HorizontalAlignment.Center };
+		lblB.AddThemeColorOverride("font_color", GlobalUIController.GetElementColor(b.GetWuXing()));
+		lblB.AddThemeFontSizeOverride("font_size", 24);
+		vBox.AddChild(lblB);
+
+		var lblAge = new Label { Text = $"{age}" + Tr("TXT_AGE"), HorizontalAlignment = HorizontalAlignment.Center };
+		lblAge.AddThemeFontSizeOverride("font_size", 20);
+		lblAge.AddThemeColorOverride("font_color", Colors.Gray);
+		vBox.AddChild(lblAge);
+		
+		btn.Pressed += () => OnDaYunClicked(index);
+
+		return btn;
+	}
+
+	private PanelContainer CreateLiuNianPillar(HeavenlyStem s, EarthlyBranch b, int year, int age)
+	{
+		var p = new PanelContainer();
+		var style = new StyleBoxFlat
+		{
+			BgColor = GlobalUIController.ColorSurface.Lightened(0.05f),
+			CornerRadiusTopLeft = 8,
+			CornerRadiusTopRight = 8,
+			CornerRadiusBottomLeft = 8,
+			CornerRadiusBottomRight = 8,
+			BorderWidthBottom = 2,
+			BorderColor = GlobalUIController.GetElementColor(b.GetWuXing())
+		};
+		p.AddThemeStyleboxOverride("panel", style);
+		p.CustomMinimumSize = new Vector2(160, 100);
+
+		var vBox = new VBoxContainer();
+		p.AddChild(vBox);
+
+		var lblYear = new Label { Text = $"{year}", HorizontalAlignment = HorizontalAlignment.Center };
+		lblYear.AddThemeColorOverride("font_color", Colors.LightGray);
+		lblYear.AddThemeFontSizeOverride("font_size", 20);
+		vBox.AddChild(lblYear);
+
+		var hBox = new HBoxContainer();
+		hBox.Alignment = BoxContainer.AlignmentMode.Center;
+		vBox.AddChild(hBox);
+
+		var lblS = new Label { Text = s.GetLocalizedName() };
+		lblS.AddThemeColorOverride("font_color", GlobalUIController.GetElementColor(s.GetWuXing()));
+		lblS.AddThemeFontSizeOverride("font_size", 24);
+		hBox.AddChild(lblS);
+
+		var lblB = new Label { Text = b.GetLocalizedName() };
+		lblB.AddThemeColorOverride("font_color", GlobalUIController.GetElementColor(b.GetWuXing()));
+		lblB.AddThemeFontSizeOverride("font_size", 24);
+		hBox.AddChild(lblB);
+
+		return p;
+	}
+
 	private void RenderPillars(int yIdx, int mIdx, int dIdx, int hIdx)
 	{
 		foreach (Node child in _pillarsContainer.GetChildren()) child.QueueFree();
@@ -128,16 +348,16 @@ public partial class BaziModule : VBoxContainer
 		var hourStem = GanZhiMath.GetStem(hIdx);
 		var hourBranch = GanZhiMath.GetBranch(hIdx);
 
-		AddPillar("TXT_PILLAR_YEAR", yearStem, yearBranch, dayStem);
-		AddPillar("TXT_PILLAR_MONTH", monthStem, monthBranch, dayStem);
-		AddPillar("TXT_PILLAR_DAY", dayStem, dayBranch, dayStem);
-		AddPillar("TXT_PILLAR_HOUR", hourStem, hourBranch, dayStem);
+		AddPillar(_pillarsContainer, "TXT_PILLAR_YEAR", yearStem, yearBranch, dayStem);
+		AddPillar(_pillarsContainer, "TXT_PILLAR_MONTH", monthStem, monthBranch, dayStem);
+		AddPillar(_pillarsContainer, "TXT_PILLAR_DAY", dayStem, dayBranch, dayStem);
+		AddPillar(_pillarsContainer, "TXT_PILLAR_HOUR", hourStem, hourBranch, dayStem);
 	}
 
-	private void AddPillar(string title, HeavenlyStem stem, EarthlyBranch branch, HeavenlyStem dayMaster)
+	private void AddPillar(Container parent, string title, HeavenlyStem stem, EarthlyBranch branch, HeavenlyStem dayMaster)
 	{
 		var pillar = new PillarWidget(title, stem, branch, dayMaster);
-		_pillarsContainer.AddChild(pillar);
+		parent.AddChild(pillar);
 	}
 
 	private void RenderAnalysis(BaziResult result)
@@ -240,7 +460,7 @@ public partial class BaziModule : VBoxContainer
 					Text = hText,
 					HorizontalAlignment = HorizontalAlignment.Center
 				};
-				lbl.AddThemeFontSizeOverride("font_size", 16);
+				lbl.AddThemeFontSizeOverride("font_size", 20);
 
 				Color baseColor = hidden.IsMainQi ? Colors.LightGray : Colors.Gray;
 				lbl.AddThemeColorOverride("font_color", baseColor);

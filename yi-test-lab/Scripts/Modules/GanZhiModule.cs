@@ -338,7 +338,7 @@ namespace YojigenShift.YiTestLab.Modules
 			string c = GlobalUIController.GetElementColor(b.GetWuXing()).ToHtml();
 
 			_infoLabel.Text = Helpers.GetLocalizedFormat("TXT_BRANCH_RESULT",
-				c, b.GetLocalizedName(), b.GetZodiacKey(), b.GetWuXing().GetLocalizedName(), b.GetSeason(), sbRelations);
+				c, b.GetLocalizedName(), b.GetZodiacKey(), b.GetWuXing().GetLocalizedName(), b.GetSeason().GetLocalizedName(), sbRelations);
 		}
 
 		#endregion

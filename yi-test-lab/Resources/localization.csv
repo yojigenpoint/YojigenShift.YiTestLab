@@ -44,4 +44,6 @@ TXT_PILLAR_HOUR,时柱,Time
 TXT_PILLAR_DAYMASTER,日元,Day Master
 TXT_PILLAR_STRONG,身强,Prosperous
 TXT_PILLAR_WEAK,身弱,Weak
+TXT_DAYUN_TITLE,大运（选择查看流年）,Great Life Cycles (Select to view Annual Pillars)
+TXT_AGE,岁,Age
 TXT_BAZI_RESULT,[center][font_size=32][b]简易分析[/b][/font_size][/center]\n\n[font_size=28]日主：[color={0}]{1}[/color][/font_size]\n[font_size=24]得分：{2}[/font_size]\n\n[font_size=28]喜用神： {3}[/font_size]\n[font_size=24][i]{4}[/i][/font_size],[center][font_size=32][b]Chart Analysis[/b][/font_size][/center]\n\n[font_size=28]Day Master Status: [color={0}]{1}[/color][/font_size]\n[font_size=24]Energy Scores: {2}[/font_size]\n\n[font_size=28]Useful Gods (Xi Yong): {3}[/font_size]\n[font_size=24][i]{4}[/i][/font_size]
