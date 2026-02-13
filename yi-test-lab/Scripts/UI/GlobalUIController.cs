@@ -31,6 +31,7 @@ namespace YojigenShift.YiTestLab.UI
 		#region Modules
 		[Export] public PackedScene TimeDialScene { get; set; }
 		[Export] public PackedScene BaziScene { get; set; }
+		[Export] public PackedScene NamingScene { get; set; }
 		[Export] public PackedScene WuXingScene { get; set; }
 		[Export] public PackedScene GanZhiScene { get; set; }
 		#endregion
@@ -310,6 +311,8 @@ namespace YojigenShift.YiTestLab.UI
 			_moduleSelector.AddItem(label);
 			int index = _moduleSelector.ItemCount - 1;
 			_moduleSelector.SetItemMetadata(index, mod.Id);
+			if (_isEnglish && mod.Id.Equals("UI_MOD_NAMING"))
+				_moduleSelector.SetItemDisabled(index, true);
 		}
 
 		private void OnModuleSelected(long index)
@@ -364,6 +367,9 @@ namespace YojigenShift.YiTestLab.UI
 				case "UI_MOD_BAZI":
 					targetScene = BaziScene;
 					break;
+				case "UI_MOD_NAMING":
+					targetScene = NamingScene;
+					break;
 				case "UI_MOD_WUXING":
 					targetScene = WuXingScene;
 					break;
@@ -400,6 +406,9 @@ namespace YojigenShift.YiTestLab.UI
 		private void OnLanguageToggled()
 		{
 			_isEnglish = !_isEnglish;
+
+			if (_isEnglish && _currentModuleId.Equals("UI_MOD_NAMING"))
+				_currentModuleId = "UI_MOD_BAZI";
 
 			string godotLocale = _isEnglish ? "en" : "zh_CN";
 			string yiLangCode = _isEnglish ? "en_US" : "zh_CN";

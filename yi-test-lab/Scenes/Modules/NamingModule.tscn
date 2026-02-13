@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bdp6uttfn3e3a"]
+
+[ext_resource type="Script" uid="uid://dux8glh0ykkcb" path="res://Scripts/Modules/NamingModule.cs" id="1_j8cxo"]
+
+[node name="NamingModule" type="VBoxContainer" unique_id=1818762765]
+script = ExtResource("1_j8cxo")
