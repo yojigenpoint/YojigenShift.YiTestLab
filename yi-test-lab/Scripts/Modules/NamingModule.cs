@@ -317,12 +317,12 @@ namespace YojigenShift.YiTestLab.Modules
 					foreach (var w in c.Warnings)
 						sb.Append($"	[color=orange]⚠ {w}[/color]\n");
 
-					sb.Append("[/font_size]\n");
+					sb.Append("\n");
 					rank++;
 				}
 			}
 
-				_reportLabel.Text = sb.ToString();
+				_reportLabel.Text = sb.Append("[/font_size]").ToString();
 		}
 	}
 }

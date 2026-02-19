@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dethx7655wfjr"]
+
+[ext_resource type="Script" uid="uid://b504hhs7gipet" path="res://Scripts/Modules/BaguaModule.cs" id="1_ou1cr"]
+
+[node name="BaguaModule" type="VBoxContainer" unique_id=279282800]
+script = ExtResource("1_ou1cr")

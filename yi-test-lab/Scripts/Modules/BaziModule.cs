@@ -212,7 +212,6 @@ namespace YojigenShift.YiTestLab.Modules
 
 				_dayunStartYears[i] = currentYear;
 
-				// 创建可点击的大运柱
 				var pillBtn = CreateClickableMiniPillar(stem, branch, currentAge, i);
 				_dayunContainer.AddChild(pillBtn);
 			}

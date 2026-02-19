@@ -34,6 +34,7 @@ namespace YojigenShift.YiTestLab.UI
 		[Export] public PackedScene NamingScene { get; set; }
 		[Export] public PackedScene WuXingScene { get; set; }
 		[Export] public PackedScene GanZhiScene { get; set; }
+		[Export] public PackedScene TrigramScene { get; set; }
 		#endregion
 
 		public event Action<bool> GenderChanged;
@@ -65,6 +66,30 @@ namespace YojigenShift.YiTestLab.UI
 			new ModuleConfig { Id = "UI_MOD_HEXAGRAM", TrKey = "MOD_HEXAGRAM", Type = ModuleType.Validation }
 		};
 
+		private struct CityInfo
+		{
+			public string Name;
+			public double Longitude;
+			public double UtcOffset;
+		}
+
+		private List<CityInfo> _cities = new List<CityInfo>
+		{
+			new CityInfo { Name = "Beijing (北京)", Longitude = 116.40, UtcOffset = 8 },
+			new CityInfo { Name = "Shanghai (上海)", Longitude = 121.47, UtcOffset = 8 },
+			new CityInfo { Name = "Guangzhou (广州)", Longitude = 113.26, UtcOffset = 8 },
+			new CityInfo { Name = "Guilin (桂林)", Longitude = 110.28, UtcOffset = 8 },
+			new CityInfo { Name = "Chengdu (成都)", Longitude = 104.06, UtcOffset = 8 },
+			new CityInfo { Name = "Xi'an (西安)", Longitude = 108.94, UtcOffset = 8 },
+			new CityInfo { Name = "Urumqi (乌鲁木齐)", Longitude = 87.62, UtcOffset = 8 },
+			new CityInfo { Name = "Hong Kong (香港)", Longitude = 114.17, UtcOffset = 8 },
+			new CityInfo { Name = "Taipei (台北)", Longitude = 121.50, UtcOffset = 8 },
+			new CityInfo { Name = "Tokyo (东京)", Longitude = 139.69, UtcOffset = 9 },
+			new CityInfo { Name = "New York (纽约)", Longitude = -74.00, UtcOffset = -5 },
+			new CityInfo { Name = "London (伦敦)", Longitude = -0.12, UtcOffset = 0 },
+			new CityInfo { Name = "San Francisco (旧金山)", Longitude = -122.42, UtcOffset = -8 }
+		};
+
 		#endregion
 
 		#region 2. UI
@@ -77,6 +102,14 @@ namespace YojigenShift.YiTestLab.UI
 
 		private OptionButton _moduleSelector;
 		private Button _langToggleBtn;
+		private Button _genderBtn;
+
+		private OptionButton _citySelector;
+		private CheckButton _summerTimeSwitch;
+
+		private HBoxContainer _manualLocContainer;
+		private SpinBox _spinLong;
+		private SpinBox _spinOffset;
 
 		private Node _currentModuleInstance;
 
@@ -84,7 +117,6 @@ namespace YojigenShift.YiTestLab.UI
 		private string _currentModuleId = "UI_MOD_WUXING";
 
 		private TimePickerDial _dialYear, _dialMonth, _dialDay, _dialHour, _dialMinute;
-		private Button _genderBtn;
 
 		#endregion
 
@@ -153,7 +185,7 @@ namespace YojigenShift.YiTestLab.UI
 			_mainVBox.AddChild(_mainHeader);
 
 			// --- 2. Sub Header ---
-			_subHeader = CreatePanel("SubHeader", 320);
+			_subHeader = CreatePanel("SubHeader", 0);
 			_subHeader.Visible = false;
 			_mainVBox.AddChild(_subHeader);
 
@@ -173,39 +205,156 @@ namespace YojigenShift.YiTestLab.UI
 
 		private void SetupTimeInputArea()
 		{
-			var hBox = new HBoxContainer();
-			hBox.Alignment = BoxContainer.AlignmentMode.Center;
-			hBox.AddThemeConstantOverride("separation", 15);
-
+			var vBox = new VBoxContainer();
+			vBox.AddThemeConstantOverride("separation", 15);
 			var margin = new MarginContainer();
-			margin.AddThemeConstantOverride("margin_top", 20);
-			margin.AddThemeConstantOverride("margin_bottom", 20);
-			margin.AddChild(hBox);
+			margin.AddThemeConstantOverride("margin_top", 20); margin.AddThemeConstantOverride("margin_bottom", 20);
+			margin.AddChild(vBox);
 			_subHeader.AddChild(margin);
 
-			// 1. Gender
+			// --- Row 1: Gender | City | True Solar Time Toggle ---
+			var row1 = new HBoxContainer();
+			row1.Alignment = BoxContainer.AlignmentMode.Center;
+			row1.AddThemeConstantOverride("separation", 20);
+			vBox.AddChild(row1);
+
 			_genderBtn = new Button
 			{
-				CustomMinimumSize = new Vector2(160, 200),
+				CustomMinimumSize = new Vector2(120, 80),
 				ToggleMode = true,
 				FocusMode = FocusModeEnum.None
 			};
-			_genderBtn.AddThemeFontSizeOverride("font_size", 40);
+			_genderBtn.AddThemeFontSizeOverride("font_size", 32);
 			_genderBtn.Pressed += OnGenderToggled;
-			hBox.AddChild(_genderBtn);
-						
-			hBox.AddChild(new VSeparator());
+			row1.AddChild(_genderBtn);
 
-			// 2. Initialize 5 dials
+			_citySelector = new OptionButton();
+			_citySelector.CustomMinimumSize = new Vector2(300, 80);
+			_citySelector.AddThemeFontSizeOverride("font_size", 28);
+			_citySelector.GetPopup().AddThemeFontSizeOverride("font_size", 28);
+			foreach (var city in _cities)
+			{
+				_citySelector.AddItem(city.Name);
+			}
+			_citySelector.AddItem("Custom (Manual)");
 
-			_dialYear = CreateDial("TXT_TIME_YEAR", 1900, 2100, CurrentTime.Year, hBox);
-			_dialMonth = CreateDial("TXT_TIME_MONTH", 1, 12, CurrentTime.Month, hBox);
-			_dialDay = CreateDial("TXT_TIME_DAY", 1, 31, CurrentTime.Day, hBox);
+			_citySelector.ItemSelected += OnCitySelected;
+			row1.AddChild(_citySelector);
 
-			hBox.AddChild(new VSeparator());
+			var vBoxSolar = new VBoxContainer();
+			vBoxSolar.Alignment = BoxContainer.AlignmentMode.Center;
+			var lblSolar = new Label { Text = Tr("TXT_SUMMER_TIME") };
+			lblSolar.AddThemeFontSizeOverride("font_size", 16);
+			lblSolar.AddThemeColorOverride("font_color", ColorTextSecondary);
 
-			_dialHour = CreateDial("TXT_TIME_HOUR", 0, 23, CurrentTime.Hour, hBox);
-			_dialMinute = CreateDial("TXT_TIME_MIN", 0, 59, CurrentTime.Minute, hBox);
+			_summerTimeSwitch = new CheckButton { Text = Tr("TXT_TOGGLE_OFF"), ButtonPressed = false };
+			_summerTimeSwitch.Pressed += () => {
+				_summerTimeSwitch.Text = _summerTimeSwitch.ButtonPressed ? Tr("TXT_TOGGLE_ON") : Tr("TXT_TOGGLE_OFF");
+				UpdateGlobalTime();
+			};
+
+			vBoxSolar.AddChild(lblSolar);
+			vBoxSolar.AddChild(_summerTimeSwitch);
+			row1.AddChild(vBoxSolar);
+
+			_manualLocContainer = new HBoxContainer();
+			_manualLocContainer.Alignment = BoxContainer.AlignmentMode.Center;
+			_manualLocContainer.AddThemeConstantOverride("separation", 20);
+			_manualLocContainer.Visible = false;
+			vBox.AddChild(_manualLocContainer);
+
+			var lblLong = new Label { Text = Tr("TXT_LONGITUDE") };
+			_spinLong = new SpinBox
+			{
+				MinValue = -180,
+				MaxValue = 180,
+				Step = 0.01,
+				Value = 116.46,
+				CustomMinimumSize = new Vector2(150, 0)
+			};
+			_spinLong.ValueChanged += (val) => UpdateGlobalTime();
+			_manualLocContainer.AddChild(lblLong);
+			_manualLocContainer.AddChild(_spinLong);
+
+			var lblOffset = new Label { Text = Tr("TXT_TIMEZONE") };
+			_spinOffset = new SpinBox
+			{
+				MinValue = -12,
+				MaxValue = 14,
+				Step = 0.5,
+				Value = 8,
+				CustomMinimumSize = new Vector2(100, 0)
+			};
+			_spinOffset.ValueChanged += (val) => UpdateGlobalTime();
+			_manualLocContainer.AddChild(lblOffset);
+			_manualLocContainer.AddChild(_spinOffset);
+
+			vBox.AddChild(new HSeparator());
+
+			// --- Row 2: Time Dial ---
+			var row2 = new HBoxContainer();
+			row2.Alignment = BoxContainer.AlignmentMode.Center;
+			row2.AddThemeConstantOverride("separation", 15);
+			vBox.AddChild(row2);
+
+			DateTime now = DateTime.Now;
+			_dialYear = CreateDial("Year", 1900, 2100, now.Year, row2);
+			_dialMonth = CreateDial("Month", 1, 12, now.Month, row2);
+			_dialDay = CreateDial("Day", 1, 31, now.Day, row2);
+			row2.AddChild(new VSeparator());
+			_dialHour = CreateDial("Hour", 0, 23, now.Hour, row2);
+			_dialMinute = CreateDial("Min", 0, 59, now.Minute, row2);
+		}
+
+		private void OnCitySelected(long index)
+		{
+			bool isCustom = (index == _cities.Count);
+			_manualLocContainer.Visible = isCustom;
+
+			_subHeader.CustomMinimumSize = new Vector2(0, isCustom ? 520 : 380);
+
+			UpdateGlobalTime();
+		}
+
+		private void UpdateGlobalTime()
+		{
+			int y = _dialYear.Value; int m = _dialMonth.Value; int d = _dialDay.Value;
+			int h = _dialHour.Value; int min = _dialMinute.Value;
+
+			int daysInMonth = DateTime.DaysInMonth(y, m);
+			if (d > daysInMonth) { d = daysInMonth; _dialDay.SetValue(d, false); }
+			_dialDay.SetRange(1, daysInMonth);
+
+			try
+			{
+				// TODO: summertime
+				// _summerTimeSwitch
+				DateTime clockTime = new DateTime(y, m, d, h, min, 0, DateTimeKind.Utc);
+
+				double longitude;
+				double utcOffset;
+
+				if (_citySelector.Selected == _cities.Count)
+				{
+					longitude = _spinLong.Value;
+					utcOffset = _spinOffset.Value;
+				}
+				else
+				{
+					CityInfo city = _cities[_citySelector.Selected];
+					longitude = city.Longitude;
+					utcOffset = city.UtcOffset;
+				}
+
+				DateTime trueSolarTime = SolarTimeHelper.GetTrueSolarTime(clockTime, longitude);
+
+				CurrentTime = trueSolarTime;
+				GlobalTimeChanged?.Invoke(CurrentTime);
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr("Time Calc Error: " + ex.Message);
+			}
 		}
 
 		private void OnGenderToggled()
@@ -251,42 +400,9 @@ namespace YojigenShift.YiTestLab.UI
 			dial.MaxValue = max;
 			dial.SetValue(current); 
 
-			dial.ValueChanged += (val) => OnDateDialChanged(); 
+			dial.ValueChanged += (val) => UpdateGlobalTime(); 
 			parent.AddChild(dial);
 			return dial;
-		}
-
-		private void OnDateDialChanged()
-		{
-			// 1. Get current values
-			int y = _dialYear.Value;
-			int m = _dialMonth.Value;
-			int d = _dialDay.Value;
-			int h = _dialHour.Value;
-			int min = _dialMinute.Value;
-
-			// 2. Validate Date
-			int daysInMonth = DateTime.DaysInMonth(y, m);
-			if (d > daysInMonth)
-			{
-				d = daysInMonth;
-				_dialDay.SetValue(d, false);
-			}
-			_dialDay.SetRange(1, daysInMonth);
-
-			// 3. New DateTime
-			try
-			{
-				var newTime = new DateTime(y, m, d, h, min, 0, DateTimeKind.Utc);
-				CurrentTime = newTime;
-
-				// 4. Broadcast
-				GlobalTimeChanged?.Invoke(CurrentTime);
-			}
-			catch (Exception ex)
-			{
-				GD.PrintErr($"Invalid Date: {y}-{m}-{d} " + ex.Message);
-			}
 		}
 
 		private void RefreshModuleSelector()
@@ -376,6 +492,10 @@ namespace YojigenShift.YiTestLab.UI
 				case "UI_MOD_GANZHI":
 					targetScene = GanZhiScene;
 					break;
+				case "UI_MOD_TRIGRAM":
+					targetScene = TrigramScene;
+					break;
+
 			}
 
 			if (targetScene != null)

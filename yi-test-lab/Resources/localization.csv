@@ -17,12 +17,18 @@ MOD_GANZHI_TITLE,天干 & 地支,Stems & Branches Matrix
 MOD_GANZHI_STEM_TITLE,天干,Heavenly Stems
 MOD_GANZHI_BRANCH_TITLE,地支,Earthly Branches
 MOD_BAZI_TITLE,八字排盘,Bazi Plotter
+MOD_TRIGRAM_TITLE,八卦,Trigrams
 MOD_WUXING_INFO_DEFAULT,选择五行进行分析……,Select on element to analyze...
 TXT_TIME_YEAR,年,Year
 TXT_TIME_MONTH,月,Month
 TXT_TIME_DAY,日,Day
 TXT_TIME_HOUR,时,Hour
 TXT_TIME_MIN,分,Minute
+TXT_SUMMER_TIME,夏令时,Summer Time
+TXT_TOGGLE_ON,开,On
+TXT_TOGGLE_OFF,关,Off
+TXT_LONGITUDE,经度：,Longitude:
+TXT_TIMEZONE,时区：,Timezone:
 TXT_GENDER_TITLE,性别,Gender
 TXT_GENDER_MALE,男,Male
 TXT_GENDER_FEMALE,女,Female
@@ -47,3 +53,5 @@ TXT_PILLAR_WEAK,身弱,Weak
 TXT_DAYUN_TITLE,大运（选择查看流年）,Great Life Cycles (Select to view Annual Pillars)
 TXT_AGE,岁,Age
 TXT_BAZI_RESULT,[center][font_size=32][b]简易分析[/b][/font_size][/center]\n\n[font_size=28]日主：[color={0}]{1}[/color][/font_size]\n[font_size=24]得分：{2}[/font_size]\n\n[font_size=28]喜用神： {3}[/font_size]\n[font_size=24][i]{4}[/i][/font_size],[center][font_size=32][b]Chart Analysis[/b][/font_size][/center]\n\n[font_size=28]Day Master Status: [color={0}]{1}[/color][/font_size]\n[font_size=24]Energy Scores: {2}[/font_size]\n\n[font_size=28]Useful Gods (Xi Yong): {3}[/font_size]\n[font_size=24][i]{4}[/i][/font_size]
+TXT_TRIGRAM_SWITCH_BTN_EH,切换到先天八卦,Switch to Early Heaven
+TXT_TRIGRAM_SWITCH_BTN_LH,切换到后天八卦,Switch to Later Heaven
