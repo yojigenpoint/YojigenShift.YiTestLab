@@ -1,6 +1,7 @@
 using Godot;
 using YojigenShift.YiFramework.Enums;
 using YojigenShift.YiFramework.Extensions;
+using YojigenShift.YiTestLab.Core;
 using YojigenShift.YiTestLab.UI;
 
 namespace YojigenShift.YiTestLab.Modules
@@ -98,28 +99,8 @@ namespace YojigenShift.YiTestLab.Modules
 
 			string colorHex = GlobalUIController.GetElementColor(wuxing).ToHtml();
 
-			// Placeholder
-			string image = GetImageMeaning(t);
-
-			_infoLabel.Text = $"[center][font_size=48]Selected: [color=#{colorHex}]{t}[/color][/font_size]\n" +
-							  $"[font_size=28]Nature: {image} | Element: {wuxing}[/font_size]\n" +
-							  $"[font_size=24]Early Num: {preNum} | Later Num: {postNum}[/font_size][/center]";
-		}
-
-		private string GetImageMeaning(TrigramName t)
-		{
-			return t switch
-			{
-				TrigramName.Qian => "Heaven (天)",
-				TrigramName.Kun => "Earth (地)",
-				TrigramName.Zhen => "Thunder (雷)",
-				TrigramName.Xun => "Wind (风)",
-				TrigramName.Kan => "Water (水)",
-				TrigramName.Li => "Fire (火)",
-				TrigramName.Gen => "Mountain (山)",
-				TrigramName.Dui => "Lake (泽)",
-				_ => ""
-			};
+			_infoLabel.Text = Helpers.GetLocalizedFormat("TXT_TRIGRAM_RESULT",
+				colorHex, t.GetLocalizedName(), TrigramNameExtensions.GetTrigramMeaning(t), wuxing.GetLocalizedName(), preNum, postNum);
 		}
 	}
 }

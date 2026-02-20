@@ -2,7 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using YojigenShift.YiFramework.Enums;
+using YojigenShift.YiFramework.Extensions;
 using YojigenShift.YiFramework.QiMen.Logic;
+using YojigenShift.YiTestLab.Core;
 using YojigenShift.YiTestLab.Modules.Components;
 using YojigenShift.YiTestLab.UI;
 
@@ -56,7 +58,7 @@ namespace YojigenShift.YiTestLab.Modules
 		private void SetupUI()
 		{
 			// 1. Title
-			var title = new Label { Text = "Qi Men Dun Jia (奇门遁甲)", HorizontalAlignment = HorizontalAlignment.Center };
+			var title = new Label { Text = Tr("MOD_QIMEN_TITLE"), HorizontalAlignment = HorizontalAlignment.Center };
 			title.AddThemeFontSizeOverride("font_size", 40);
 			AddChild(title);
 
@@ -92,8 +94,9 @@ namespace YojigenShift.YiTestLab.Modules
 				var chart = QiMenPlotter.Plot(_currentTime);
 
 				// 2. Update Info
-				string dunStr = chart.Dun == DunType.Yang ? "Yang" : "Yin";
-				_lblInfo.Text = $"{dunStr} Dun Ju {chart.JuNumber} | Leader: {chart.XunLeader} | ZhiFu: {chart.ZhiFuStar} | ZhiShi: {chart.ZhiShiDoor}";
+				_lblInfo.Text = Helpers.GetLocalizedFormat("TXT_QIMEN_INFO",
+					chart.Dun.GetLocalizedName(), chart.JuNumber, chart.XunLeader.GetLocalizedName(), chart.ZhiFuStar.GetLocalizedName(),
+					chart.ZhiShiDoor.GetLocalizedName());
 
 				// 3. Calculation
 				EarthlyBranch horseBranch = CalculateHorse(chart.HourBranch);

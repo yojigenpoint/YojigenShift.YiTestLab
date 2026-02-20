@@ -9,27 +9,26 @@ namespace YojigenShift.YiTestLab.Modules.Components
 {
 	public partial class QimenCell : PanelContainer
 	{
-		// UI 引用
+		// UI
 		private Label _lblGod;
 		private Label _lblHeavenStem;
 		private Label _lblStar;
 		private Label _lblEarthStem;
-		private Label _lblPalaceNum; // 左下角宫位图
+		private Label _lblPalaceNum;
 		private Label _lblDoor;
 		private Label _lblHiddenStem;
 
-		// 角落标记
-		private Label _lblHorse; // 马星
-		private Label _lblVoid;  // 空亡
+		// corner marks
+		private Label _lblHorse; // Hourse
+		private Label _lblVoid;  // Empty
 
-		// 状态标记 (四害)
-		private ColorRect _statusIndicator; // 或者是文字颜色变化
+		// Status
+		private ColorRect _statusIndicator;
 
 		public override void _Ready()
 		{
-			CustomMinimumSize = new Vector2(300, 300); // 宫位大一点
+			CustomMinimumSize = new Vector2(300, 300);
 
-			// 样式
 			var style = new StyleBoxFlat
 			{
 				BgColor = GlobalUIController.ColorSurface.Lightened(0.02f),
@@ -46,7 +45,6 @@ namespace YojigenShift.YiTestLab.Modules.Components
 
 		private void SetupLayout()
 		{
-			// 使用 MarginContainer 留出边距
 			var margin = new MarginContainer();
 			margin.AddThemeConstantOverride("margin_left", 10);
 			margin.AddThemeConstantOverride("margin_right", 10);
@@ -69,7 +67,7 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			// --- Middle Row: HeavenStem | Star | EarthStem ---
 			var midRow = new HBoxContainer();
 			midRow.Alignment = BoxContainer.AlignmentMode.Center;
-			midRow.AddThemeConstantOverride("separation", 20); // 间距
+			midRow.AddThemeConstantOverride("separation", 20);
 
 			_lblHeavenStem = CreateLabel(32, GlobalUIController.ColorTextPrimary);
 			_lblStar = CreateLabel(28, GlobalUIController.ColorTextPrimary);
@@ -85,9 +83,9 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			// --- Bottom Row: PalaceNum | Door | HiddenStem ---
 			var botRow = new HBoxContainer();
 
-			_lblPalaceNum = CreateLabel(36, Colors.Gray); // 宫位数字大一点，做底纹感觉
+			_lblPalaceNum = CreateLabel(36, Colors.Gray);
 
-			// Door 和 Hidden 放中间和右边
+			// Door at the center, and Hidden on the right
 			var botRight = new HBoxContainer();
 			botRight.AddThemeConstantOverride("separation", 20);
 			_lblDoor = CreateLabel(28, GlobalUIController.ColorTextPrimary);
@@ -101,8 +99,7 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			botRow.AddChild(botRight);
 			vBox.AddChild(botRow);
 
-			// --- Overlays (马/空) ---
-			// 使用 Control 节点绝对定位
+			// --- Overlays (Horse/Empty) ---
 			var overlay = new Control();
 			overlay.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 			overlay.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -110,14 +107,13 @@ namespace YojigenShift.YiTestLab.Modules.Components
 
 			_lblHorse = new Label { Text = "马", Visible = false };
 			_lblHorse.AddThemeColorOverride("font_color", Colors.Yellow);
-			_lblHorse.SetPosition(new Vector2(0, 0)); // 左上
+			_lblHorse.SetPosition(new Vector2(0, 0));
 			overlay.AddChild(_lblHorse);
 
 			_lblVoid = new Label { Text = "○", Visible = false };
 			_lblVoid.AddThemeColorOverride("font_color", Colors.Gray);
 			_lblVoid.AddThemeFontSizeOverride("font_size", 24);
-			_lblVoid.SetAnchorsAndOffsetsPreset(LayoutPreset.TopRight); // 右上
-																		// 注意：纯代码设置 Anchor 有时需要手动计算 Pos，这里简单处理
+			_lblVoid.SetAnchorsAndOffsetsPreset(LayoutPreset.TopRight); 
 			_lblVoid.SetPosition(new Vector2(250, 0));
 			overlay.AddChild(_lblVoid);
 		}
@@ -126,22 +122,22 @@ namespace YojigenShift.YiTestLab.Modules.Components
 		{
 			if (p == null) return;
 
-			// 1. 设置文本
-			_lblGod.Text = p.God.ToString();
-			_lblHeavenStem.Text = p.HeavenPlateStem.ToString();
-			_lblEarthStem.Text = p.EarthPlateStem.ToString();
-			_lblStar.Text = p.Star.ToString();
-			_lblDoor.Text = p.Door.ToString();
-			_lblHiddenStem.Text = p.HiddenStem.ToString();
+			// 1. Text
+			_lblGod.Text = p.God.GetLocalizedName();
+			_lblHeavenStem.Text = p.HeavenPlateStem.GetLocalizedName();
+			_lblEarthStem.Text = p.EarthPlateStem.GetLocalizedName();
+			_lblStar.Text = p.Star.GetLocalizedName();
+			_lblDoor.Text = p.Door.GetLocalizedName();
+			_lblHiddenStem.Text = p.HiddenStem.GetLocalizedName();
 
-			// 宫位显示：可以是数字(4) 或者 地支(巽)
+			// Palace number (could be the name)
 			_lblPalaceNum.Text = p.Index.ToString();
 
-			// 2. 设置马/空
+			// 2. Set Horse/Empty
 			_lblHorse.Visible = isHorse;
 			_lblVoid.Visible = isVoid;
 
-			// 3. 计算四害并着色 (核心逻辑)
+			// 3. Calculate
 			AnalyzeFourHarms(p);
 		}
 

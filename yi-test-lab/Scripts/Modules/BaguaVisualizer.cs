@@ -28,10 +28,7 @@ namespace YojigenShift.YiTestLab.Modules
 		// Index 0 = Top/South, Clockwise
 		// 0:Top, 1:TR, 2:Right, 3:BR, 4:Bottom, 5:BL, 6:Left, 7:TL
 		private readonly TrigramName[] _earlyHeavenOrder =
-		{
-			TrigramName.Qian, // Top (S)
-			TrigramName.Xun,  // TR (SW) -> Wait, std map: Qian(S), Xun(SW), Kan(W), Gen(NW), Kun(N), Zhen(NE), Li(E), Dui(SE)
-			
+		{			
 			// UI Clockwise (Top -> Right -> Bottom -> Left)
 			TrigramName.Qian, // Top
 			TrigramName.Xun,  // Top-Right
@@ -90,8 +87,8 @@ namespace YojigenShift.YiTestLab.Modules
 
 			// 1. Draw Tai Chi
 			DrawCircle(center, _radius * 0.4f, GlobalUIController.ColorSurface.Lightened(0.05f));
-			string centerText = _currentSequence == BaguaSequence.EarlyHeaven ? "先天\nEarly" : "后天\nLater";
-			DrawString(ThemeDB.FallbackFont, center + new Vector2(-40, -15), centerText, HorizontalAlignment.Center, -1, 24, Colors.Gray);
+			string centerText = _currentSequence == BaguaSequence.EarlyHeaven ? Tr("TXT_TRIGRAM_EARLY") : Tr("TXT_TRIGRAM_LATER");
+			DrawString(ThemeDB.FallbackFont, center + new Vector2(-40, 15), centerText, HorizontalAlignment.Center, -1, 35, Colors.Gray);
 
 			// 2. Draw Trigrams
 			for (int i = 0; i < 8; i++)
@@ -117,7 +114,7 @@ namespace YojigenShift.YiTestLab.Modules
 
 			DrawSetTransform(pos, rotation, Vector2.One);
 
-			float startY = 20; // 离中心点的偏移
+			float startY = 20;
 
 			for (int line = 1; line <= 3; line++)
 			{
@@ -149,7 +146,7 @@ namespace YojigenShift.YiTestLab.Modules
 			// To draw text unrotated, we need to reset transform or calculate text pos manually outside.
 			// Let's draw text manually outside this function or use inverse transform.
 
-			DrawString(ThemeDB.FallbackFont, new Vector2(-20, -55), name.GetLocalizedName(), HorizontalAlignment.Center, -1, 24, color);
+			DrawString(ThemeDB.FallbackFont, new Vector2(-20, -55), name.GetLocalizedName(), HorizontalAlignment.Center, -1, 35, color);
 
 			DrawSetTransform(Vector2.Zero, 0, Vector2.One);
 		}
