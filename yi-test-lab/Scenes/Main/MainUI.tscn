@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c1eeqfl3blj5h" path="res://Scenes/Modules/WuXingModule.tscn" id="2_hd34p"]
 [ext_resource type="PackedScene" uid="uid://buu2m6jsd5lg4" path="res://Scenes/Modules/GanZhiModule.tscn" id="3_hd34p"]
 [ext_resource type="PackedScene" uid="uid://bdp6uttfn3e3a" path="res://Scenes/Modules/NamingModule.tscn" id="4_1mbqm"]
+[ext_resource type="PackedScene" uid="uid://2yr3nyg73tvl" path="res://Scenes/Modules/QimenModule.tscn" id="5_bmxyk"]
 [ext_resource type="PackedScene" uid="uid://dethx7655wfjr" path="res://Scenes/Modules/BaguaModule.tscn" id="7_5iu5b"]
 
 [node name="MainUI" type="Control" unique_id=1259651162]
@@ -19,6 +20,7 @@ script = ExtResource("1_s00yu")
 TimeDialScene = ExtResource("2_2l5jr")
 BaziScene = ExtResource("2_6idxo")
 NamingScene = ExtResource("4_1mbqm")
+QiMenScene = ExtResource("5_bmxyk")
 WuXingScene = ExtResource("2_hd34p")
 GanZhiScene = ExtResource("3_hd34p")
 TrigramScene = ExtResource("7_5iu5b")

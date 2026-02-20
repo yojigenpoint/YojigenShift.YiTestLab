@@ -32,9 +32,13 @@ namespace YojigenShift.YiTestLab.UI
 		[Export] public PackedScene TimeDialScene { get; set; }
 		[Export] public PackedScene BaziScene { get; set; }
 		[Export] public PackedScene NamingScene { get; set; }
+		[Export] public PackedScene QiMenScene { get; set; }
+		[Export] public PackedScene LiuYaoScene { get; set; }
+		[Export] public PackedScene MeiHuaScene { get; set; }
 		[Export] public PackedScene WuXingScene { get; set; }
 		[Export] public PackedScene GanZhiScene { get; set; }
 		[Export] public PackedScene TrigramScene { get; set; }
+		[Export] public PackedScene HexagramScene { get; set; }
 		#endregion
 
 		public event Action<bool> GenderChanged;
@@ -485,6 +489,9 @@ namespace YojigenShift.YiTestLab.UI
 					break;
 				case "UI_MOD_NAMING":
 					targetScene = NamingScene;
+					break;
+				case "UI_MOD_QIMEN":
+					targetScene = QiMenScene;
 					break;
 				case "UI_MOD_WUXING":
 					targetScene = WuXingScene;

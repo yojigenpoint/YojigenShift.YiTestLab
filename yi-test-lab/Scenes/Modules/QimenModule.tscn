@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://2yr3nyg73tvl"]
+
+[ext_resource type="Script" uid="uid://c4v0bpm5i2scg" path="res://Scripts/Modules/QimenModule.cs" id="1_fu3bl"]
+
+[node name="QimenModule" type="VBoxContainer" unique_id=603169264]
+script = ExtResource("1_fu3bl")
