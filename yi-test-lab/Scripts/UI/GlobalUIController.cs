@@ -122,6 +122,14 @@ namespace YojigenShift.YiTestLab.UI
 
 		private TimePickerDial _dialYear, _dialMonth, _dialDay, _dialHour, _dialMinute;
 
+		private Label _toastLabel;
+		private Tween _toastTween;
+
+		private DateTime _lastInputClockTime;
+
+		private FileDialog _saveDialog;
+		private Image _pendingScreenshot;
+
 		#endregion
 
 		public override void _Ready()
@@ -129,6 +137,8 @@ namespace YojigenShift.YiTestLab.UI
 			RenderingServer.SetDefaultClearColor(ColorBGDeep);
 
 			SetupLayout();
+
+			SetupToast();
 
 			SyncLanguageState();
 
@@ -202,9 +212,9 @@ namespace YojigenShift.YiTestLab.UI
 			_mainVBox.AddChild(_bodyContent);
 
 			// --- 4. Footer ---
-			_footer = CreatePanel("Footer", 160);
-			// TODO: Functional buttons
+			_footer = CreatePanel("Footer", 120);
 			_mainVBox.AddChild(_footer);
+			SetupFooter();
 		}
 
 		private void SetupTimeInputArea()
@@ -537,7 +547,6 @@ namespace YojigenShift.YiTestLab.UI
 			}
 		}
 
-
 		private void OnLanguageToggled()
 		{
 			_isEnglish = !_isEnglish;
@@ -552,6 +561,180 @@ namespace YojigenShift.YiTestLab.UI
 			YiLocalization.CurrentLanguage = yiLangCode;
 
 			UpdateLangButtonVisuals();			
+		}
+
+		private void SetupFooter()
+		{
+			var margin = new MarginContainer();
+			margin.AddThemeConstantOverride("margin_left", 30);
+			margin.AddThemeConstantOverride("margin_right", 30);
+			margin.AddThemeConstantOverride("margin_top", 15);
+			margin.AddThemeConstantOverride("margin_bottom", 15);
+			_footer.AddChild(margin);
+
+			var hBox = new HBoxContainer();
+			hBox.Alignment = BoxContainer.AlignmentMode.Center;
+			hBox.AddThemeConstantOverride("separation", 40);
+			margin.AddChild(hBox);
+
+			// 1. 复制参数按钮
+			var btnCopy = new Button
+			{
+				Text = "Copy Context (复制排盘参数)",
+				CustomMinimumSize = new Vector2(280, 60)
+			};
+			btnCopy.AddThemeFontSizeOverride("font_size", 24);
+			btnCopy.AddThemeColorOverride("font_color", ColorTextPrimary);
+			btnCopy.Pressed += CopyContextToClipboard;
+			hBox.AddChild(btnCopy);
+
+			// 2. 截图按钮
+			var btnScreenshot = new Button
+			{
+				Text = "Screenshot (截图反馈)",
+				CustomMinimumSize = new Vector2(280, 60)
+			};
+			btnScreenshot.AddThemeFontSizeOverride("font_size", 24);
+			btnScreenshot.AddThemeColorOverride("font_color", ColorAccent);
+			btnScreenshot.Pressed += TakeScreenshot;
+			hBox.AddChild(btnScreenshot);
+
+			// 3. 版本号提示
+			var lblVersion = new Label { Text = "YiTestLab v0.8.0-Beta", VerticalAlignment = VerticalAlignment.Center };
+			lblVersion.AddThemeColorOverride("font_color", ColorTextSecondary);
+			hBox.AddChild(lblVersion);
+
+			SetupFileDialog();
+		}
+
+		private void SetupFileDialog()
+		{
+			_saveDialog = new FileDialog();
+			_saveDialog.FileMode = FileDialog.FileModeEnum.SaveFile;
+			_saveDialog.Access = FileDialog.AccessEnum.Filesystem;
+			_saveDialog.Filters = new string[] { "*.png ; PNG Images" };
+			_saveDialog.Title = Tr("TXT_SAVE_SCREENSHOT");
+
+			_saveDialog.FileSelected += OnSaveFileSelected;
+			AddChild(_saveDialog);
+		}
+
+		private async void TakeScreenshot()
+		{
+			_toastLabel.Modulate = new Color(1, 1, 1, 0);
+
+			await ToSignal(GetTree(), "process_frame");
+			await ToSignal(GetTree(), "process_frame");
+
+			try
+			{
+				_pendingScreenshot = GetViewport().GetTexture().GetImage();
+				string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+								
+				_saveDialog.CurrentFile = $"YiTestLab_Screenshot_{timestamp}.png";
+				_saveDialog.PopupCenteredRatio(0.6f);
+			}
+			catch (Exception ex)
+			{
+				ShowToast($"[Error] Screenshot failed: {ex.Message}");
+			}
+		}
+
+		private void OnSaveFileSelected(string path)
+		{
+			if (_pendingScreenshot != null)
+			{
+				Error err = _pendingScreenshot.SavePng(path);
+				if (err == Error.Ok)
+				{
+					ShowToast(Tr("TXT_SAVE_SCREENSHOT_SUCCESS"));
+				}
+				else
+				{
+					ShowToast($"[Error] Failed to save screenshot: {err}");
+				}
+
+				_pendingScreenshot = null;
+			}
+			else
+			{
+				ShowToast("[Error] No screenshot data available.");
+			}
+		}
+
+		private void CopyContextToClipboard()
+		{
+			string genderStr = IsMale ? "Male" : "Female";
+			string cityStr = _citySelector.Selected == _cities.Count ? "Custom (Manual)" : _cities[_citySelector.Selected].Name;
+			string solarStr = _summerTimeSwitch.ButtonPressed ? "ON" : "OFF";
+
+			string contextData =
+				$"--- YiTestLab Bug Report ---\n" +
+				$"Module: {_currentModuleId}\n" +
+				$"Input Clock: {_lastInputClockTime:yyyy-MM-dd HH:mm}\n" +
+				$"Gender: {genderStr}\n" +
+				$"Location: {cityStr} (Lon: {_spinLong.Value}, TZ: {_spinOffset.Value})\n" +
+				$"Summer Time: {solarStr}\n" +
+				$"Calculated UTC: {CurrentTime:yyyy-MM-dd HH:mm:ss}\n" +
+				$"----------------------------";
+
+			DisplayServer.ClipboardSet(contextData);
+			ShowToast("Context copied to clipboard! (已复制参数)");
+		}
+
+		private void SetupToast()
+		{
+			_toastLabel = new Label();
+			_toastLabel.HorizontalAlignment = HorizontalAlignment.Center;
+			_toastLabel.VerticalAlignment = VerticalAlignment.Center;
+			_toastLabel.AddThemeFontSizeOverride("font_size", 30);
+			_toastLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
+
+			var style = new StyleBoxFlat
+			{
+				BgColor = new Color(0, 0, 0, 0.8f),
+				CornerRadiusTopLeft = 10,
+				CornerRadiusTopRight = 10,
+				CornerRadiusBottomLeft = 10,
+				CornerRadiusBottomRight = 10,
+				ContentMarginLeft = 20,
+				ContentMarginRight = 20,
+				ContentMarginTop = 15,
+				ContentMarginBottom = 15
+			};
+			_toastLabel.AddThemeStyleboxOverride("normal", style);
+
+			_toastLabel.Modulate = new Color(1, 1, 1, 0);
+
+			var canvasLayer = new CanvasLayer { Layer = 100 };
+			var center = new CenterContainer();
+			center.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+			center.MouseFilter = Control.MouseFilterEnum.Ignore;
+			
+			var margin = new MarginContainer();
+			margin.AddThemeConstantOverride("margin_top", 600);
+			margin.MouseFilter = Control.MouseFilterEnum.Ignore;
+
+			margin.AddChild(_toastLabel);
+			center.AddChild(margin);
+
+			canvasLayer.AddChild(center);
+			AddChild(canvasLayer);
+		}
+
+		private void ShowToast(string message)
+		{
+			_toastLabel.Text = message;
+
+			if (_toastTween != null && _toastTween.IsValid())
+			{
+				_toastTween.Kill();
+			}
+
+			_toastTween = CreateTween();
+			_toastTween.TweenProperty(_toastLabel, "modulate", new Color(1, 1, 1, 1), 0.2f);
+			_toastTween.TweenInterval(2.5f); // Show 2.5 seconds
+			_toastTween.TweenProperty(_toastLabel, "modulate", new Color(1, 1, 1, 0), 0.5f);
 		}
 
 		// --- Helpers ---

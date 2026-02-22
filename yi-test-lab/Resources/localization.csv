@@ -68,3 +68,5 @@ TXT_HEXAGRAM_INVERTED,错卦,Inverted
 TXT_HEXAGRAM_REVERSED,综卦,Reversed
 TXT_HEXAGRAM_UPPER,上/外卦,Upper Trigram
 TXT_HEXAGRAM_LOWER,下/内卦,Lower Trigram
+TXT_SAVE_SCREENSHOT,保存截图,Save Screenshot
+TXT_SAVE_SCREENSHOT_SUCCESS,截图保存成功！,Screenshot saved successfully!
