@@ -1,7 +1,6 @@
 using Godot;
-using YojigenShift.YiFramework.Core;
-using YojigenShift.YiFramework.Enums;
 using YojigenShift.YiFramework.Extensions;
+using YojigenShift.YiFramework.QiMen.Logic;
 using YojigenShift.YiFramework.QiMen.Models;
 using YojigenShift.YiTestLab.UI;
 
@@ -9,21 +8,16 @@ namespace YojigenShift.YiTestLab.Modules.Components
 {
 	public partial class QimenCell : PanelContainer
 	{
-		// UI
 		private Label _lblGod;
-		private Label _lblHeavenStem;
-		private Label _lblStar;
-		private Label _lblEarthStem;
+		private RichTextLabel _lblHeavenStem;
+		private RichTextLabel _lblStar;
+		private RichTextLabel _lblEarthStem;
 		private Label _lblPalaceNum;
 		private Label _lblDoor;
 		private Label _lblHiddenStem;
 
-		// corner marks
-		private Label _lblHorse; // Hourse
-		private Label _lblVoid;  // Empty
-
-		// Status
-		private ColorRect _statusIndicator;
+		private Label _lblHorse;
+		private Label _lblVoid;
 
 		public override void _Ready()
 		{
@@ -56,7 +50,7 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			vBox.SizeFlagsVertical = SizeFlags.ExpandFill;
 			margin.AddChild(vBox);
 
-			// --- Top Row: God ---
+			// --- Top Row ---
 			var topCenter = new CenterContainer();
 			_lblGod = CreateLabel(24, Colors.LightGray);
 			topCenter.AddChild(_lblGod);
@@ -64,14 +58,14 @@ namespace YojigenShift.YiTestLab.Modules.Components
 
 			vBox.AddChild(new Control { SizeFlagsVertical = SizeFlags.ExpandFill });
 
-			// --- Middle Row: HeavenStem | Star | EarthStem ---
+			// --- Middle Row ---
 			var midRow = new HBoxContainer();
 			midRow.Alignment = BoxContainer.AlignmentMode.Center;
-			midRow.AddThemeConstantOverride("separation", 20);
+			midRow.AddThemeConstantOverride("separation", 25);
 
-			_lblHeavenStem = CreateLabel(32, GlobalUIController.ColorTextPrimary);
-			_lblStar = CreateLabel(28, GlobalUIController.ColorTextPrimary);
-			_lblEarthStem = CreateLabel(32, GlobalUIController.ColorTextPrimary);
+			_lblHeavenStem = CreateRichLabel(28, GlobalUIController.ColorTextPrimary);
+			_lblStar = CreateRichLabel(26, GlobalUIController.ColorTextPrimary);
+			_lblEarthStem = CreateRichLabel(28, GlobalUIController.ColorTextPrimary);
 
 			midRow.AddChild(_lblHeavenStem);
 			midRow.AddChild(_lblStar);
@@ -80,12 +74,11 @@ namespace YojigenShift.YiTestLab.Modules.Components
 
 			vBox.AddChild(new Control { SizeFlagsVertical = SizeFlags.ExpandFill });
 
-			// --- Bottom Row: PalaceNum | Door | HiddenStem ---
+			// --- Bottom Row ---
 			var botRow = new HBoxContainer();
 
 			_lblPalaceNum = CreateLabel(36, Colors.Gray);
 
-			// Door at the center, and Hidden on the right
 			var botRight = new HBoxContainer();
 			botRight.AddThemeConstantOverride("separation", 20);
 			_lblDoor = CreateLabel(28, GlobalUIController.ColorTextPrimary);
@@ -95,11 +88,11 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			botRight.AddChild(_lblHiddenStem);
 
 			botRow.AddChild(_lblPalaceNum);
-			botRow.AddChild(new Control { SizeFlagsVertical = SizeFlags.ExpandFill });
+			botRow.AddChild(new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill });
 			botRow.AddChild(botRight);
 			vBox.AddChild(botRow);
 
-			// --- Overlays (Horse/Empty) ---
+			// --- Overlays ---
 			var overlay = new Control();
 			overlay.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 			overlay.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -110,97 +103,71 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			_lblHorse.SetPosition(new Vector2(0, 0));
 			overlay.AddChild(_lblHorse);
 
-			_lblVoid = new Label { Text = "○", Visible = false };
+			_lblVoid = new Label { Text = "O", Visible = false };
 			_lblVoid.AddThemeColorOverride("font_color", Colors.Gray);
 			_lblVoid.AddThemeFontSizeOverride("font_size", 24);
-			_lblVoid.SetAnchorsAndOffsetsPreset(LayoutPreset.TopRight); 
+			_lblVoid.SetAnchorsAndOffsetsPreset(LayoutPreset.TopRight);
 			_lblVoid.SetPosition(new Vector2(250, 0));
 			overlay.AddChild(_lblVoid);
 		}
 
-		public void SetData(QiMenPalace p, bool isHorse, bool isVoid)
+		/// <summary>
+		/// Directly pass in Chart and Palace
+		/// </summary>
+		public void SetData(QiMenChart chart, QiMenPalace p)
 		{
 			if (p == null) return;
 
-			// 1. Text
+			// 1. Setup logical text content
 			_lblGod.Text = p.God.GetLocalizedName();
-			_lblHeavenStem.Text = p.HeavenPlateStem.GetLocalizedName();
-			_lblEarthStem.Text = p.EarthPlateStem.GetLocalizedName();
-			_lblStar.Text = p.Star.GetLocalizedName();
+
+			// Heaven Plate and Parasitic Stems
+			if (p.HeavenPlateParasiticStem.HasValue)
+				_lblHeavenStem.Text = $"[center]{p.HeavenPlateStem.GetLocalizedName()}\n[color=gray]{p.HeavenPlateParasiticStem.Value.GetLocalizedName()}[/color][/center]";
+			else
+				_lblHeavenStem.Text = $"[center]{p.HeavenPlateStem.GetLocalizedName()}[/center]";
+
+			// Earth Plate and Parasitic Stems
+			if (p.EarthPlateParasiticStem.HasValue)
+				_lblEarthStem.Text = $"[center]{p.EarthPlateStem.GetLocalizedName()}\n[color=gray]{p.EarthPlateParasiticStem.Value.GetLocalizedName()}[/color][/center]";
+			else
+				_lblEarthStem.Text = $"[center]{p.EarthPlateStem.GetLocalizedName()}[/center]";
+
+			// Nine Stars and Parasitic Star
+			if (p.ParasiticStar.HasValue)
+				_lblStar.Text = $"[center]{p.Star.GetLocalizedName()}\n[color=gray]{p.ParasiticStar.Value.GetLocalizedName()}[/color][/center]";
+			else
+				_lblStar.Text = $"[center]{p.Star.GetLocalizedName()}[/center]";
+
 			_lblDoor.Text = p.Door.GetLocalizedName();
 			_lblHiddenStem.Text = p.HiddenStem.GetLocalizedName();
-
-			// Palace number (could be the name)
 			_lblPalaceNum.Text = p.Index.ToString();
 
-			// 2. Set Horse/Empty
-			_lblHorse.Visible = isHorse;
-			_lblVoid.Visible = isVoid;
+			// 2. Get palace status for coloring and overlays
+			var status = QiMenEvaluator.EvaluatePalaceStatus(chart, p.Index);
 
-			// 3. Calculate
-			AnalyzeFourHarms(p);
-		}
+			// Setup Horse/Empty
+			_lblHorse.Visible = status.Contains("Horse");
+			_lblVoid.Visible = status.Contains("KongWang");
 
-		/// <summary>
-		/// 计算四害 (门迫、击刑、入墓) 并调整颜色
-		/// </summary>
-		private void AnalyzeFourHarms(QiMenPalace p)
-		{
-			// 默认颜色
+			// 3. Coloring
 			_lblDoor.Modulate = Colors.White;
 			_lblHeavenStem.Modulate = Colors.White;
 
-			// --- 1. 门迫 (Door Compulsion) ---
-			// 定义：门克宫 (Door controls Palace)
-			// 宫位五行
-			WuXingType palaceWuXing = GetPalaceWuXing(p.Index);
-			WuXingType doorWuXing = p.Door.GetWuXing();
+			// Men Po (Death Door)
+			if (status.Contains("MenPo")) _lblDoor.Modulate = new Color("#FF5252");
 
-			if (doorWuXing.IsOvercomes(palaceWuXing))
-			{
-				// 门迫 -> 红色
-				_lblDoor.Modulate = new Color("#FF5252");
-			}
+			// JiXing (Punishment) and RuMu (Entering Tomb) - Heaven Stem
+			bool isJiXing = status.Contains("JiXing");
+			bool isRuMu = status.Contains("RuMu");
 
-			// --- 2. 天盘入墓 (Tomb) ---
-			// 天盘干在宫位处于"墓"地
-			// 宫位对应的地支（简化版：取宫位的主气地支）
-			EarthlyBranch palaceBranch = GetPalaceBranch(p.Index);
-			// 查长生表 (需要引用 BaziHelpers)
-			// 注意：需要确保 BaziHelpers 能够访问。如果在 Core 命名空间下应该没问题。
-			// 这里假设 BaziHelpers 可用。
-			// 只有当 Core 中实现了 GetLifeStage 扩展方法
-
-			// 简单模拟检查:
-			// 水土墓在辰(4), 木墓在未(7), 火墓在戌(10), 金墓在丑(1)
-			// 巽4宫(辰/巳), 坤2宫(未/申)... 这种映射比较模糊
-			// 我们用后天八卦的标准地支映射
-
-			bool isTomb = CheckIsTomb(p.HeavenPlateStem, p.Index);
-
-			// --- 3. 六仪击刑 (Punishment) ---
-			// 戊-3(震), 己-2(坤), 庚-8(艮), 辛-9(离), 壬-4(巽), 癸-4(巽)
-			bool isPunish = CheckIsPunish(p.HeavenPlateStem, p.Index);
-
-			// 综合着色
-			if (isPunish && isTomb)
-			{
-				// 刑+墓 -> 蓝色
-				_lblHeavenStem.Modulate = new Color("#2196F3");
-			}
-			else if (isPunish)
-			{
-				// 击刑 -> 紫色
-				_lblHeavenStem.Modulate = new Color("#AB47BC");
-			}
-			else if (isTomb)
-			{
-				// 入墓 -> 绿色
-				_lblHeavenStem.Modulate = new Color("#66BB6A");
-			}
+			if (isJiXing && isRuMu)
+				_lblHeavenStem.Modulate = new Color("#2196F3"); // Blue: JiXing + RuMu
+			else if (isJiXing)
+				_lblHeavenStem.Modulate = new Color("#AB47BC"); // Purple: JiXing only
+			else if (isRuMu)
+				_lblHeavenStem.Modulate = new Color("#66BB6A"); // Green: RuMu only
 		}
-
-		// --- 辅助逻辑 (Helpers) ---
 
 		private Label CreateLabel(int fontSize, Color color)
 		{
@@ -211,72 +178,16 @@ namespace YojigenShift.YiTestLab.Modules.Components
 			return l;
 		}
 
-		private WuXingType GetPalaceWuXing(int index)
+		private RichTextLabel CreateRichLabel(int fontSize, Color color)
 		{
-			// 坎1水, 坤2土, 震3木, 巽4木, 中5土, 乾6金, 兑7金, 艮8土, 离9火
-			return index switch
-			{
-				1 => WuXingType.Water,
-				9 => WuXingType.Fire,
-				3 => WuXingType.Wood,
-				4 => WuXingType.Wood,
-				6 => WuXingType.Metal,
-				7 => WuXingType.Metal,
-				2 => WuXingType.Earth,
-				5 => WuXingType.Earth,
-				8 => WuXingType.Earth,
-				_ => WuXingType.None
-			};
-		}
-
-		private EarthlyBranch GetPalaceBranch(int index)
-		{
-			// 粗略映射宫位的主地支用于定长生
-			return index switch
-			{
-				1 => EarthlyBranch.Zi,    // 坎
-				8 => EarthlyBranch.Chou,  // 艮 (丑寅) -> 取墓库地支更准? 金墓在丑
-				3 => EarthlyBranch.Mao,   // 震
-				4 => EarthlyBranch.Chen,  // 巽 (辰巳) -> 水墓在辰
-				9 => EarthlyBranch.Wu,    // 离
-				2 => EarthlyBranch.Wei,   // 坤 (未申) -> 木墓在未
-				7 => EarthlyBranch.You,   // 兑
-				6 => EarthlyBranch.Xu,    // 乾 (戌亥) -> 火墓在戌
-				_ => EarthlyBranch.Zi
-			};
-		}
-
-		private bool CheckIsTomb(HeavenlyStem stem, int palaceIdx)
-		{
-			// 简易查表法
-			// 水/土 墓在 辰(4宫)
-			// 木 墓在 未(2宫)
-			// 火 墓在 戌(6宫)
-			// 金 墓在 丑(8宫)
-			var wx = stem.GetWuXing();
-
-			if ((wx == WuXingType.Water || wx == WuXingType.Earth) && palaceIdx == 4) return true;
-			if (wx == WuXingType.Wood && palaceIdx == 2) return true;
-			if (wx == WuXingType.Fire && palaceIdx == 6) return true;
-			if (wx == WuXingType.Metal && palaceIdx == 8) return true;
-
-			return false;
-		}
-
-		private bool CheckIsPunish(HeavenlyStem stem, int palaceIdx)
-		{
-			// 六仪击刑口诀：
-			// 戊三(震3) 己二(坤2) 庚八(艮8) 辛九(离9) 壬癸四(巽4)
-			return (stem, palaceIdx) switch
-			{
-				(HeavenlyStem.Wu, 3) => true,
-				(HeavenlyStem.Ji, 2) => true,
-				(HeavenlyStem.Geng, 8) => true,
-				(HeavenlyStem.Xin, 9) => true,
-				(HeavenlyStem.Ren, 4) => true,
-				(HeavenlyStem.Gui, 4) => true,
-				_ => false
-			};
+			var l = new RichTextLabel();
+			l.BbcodeEnabled = true;
+			l.FitContent = true;
+			l.ScrollActive = false;
+			l.CustomMinimumSize = new Vector2(70, 0);
+			l.AddThemeFontSizeOverride("normal_font_size", fontSize);
+			l.AddThemeColorOverride("default_color", color);
+			return l;
 		}
 	}
 }

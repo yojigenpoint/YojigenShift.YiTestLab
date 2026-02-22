@@ -460,7 +460,7 @@ namespace YojigenShift.YiTestLab.UI
 		{
 			if (_moduleSelector == null) return;
 
-			for (int i = 0; i < _modules.Count; i++)
+			for (int i = 0; i < _moduleSelector.ItemCount; i++)
 			{
 				var meta = _moduleSelector.GetItemMetadata(i);
 				if (meta.VariantType != Variant.Type.Nil && meta.AsString() == modId)
@@ -493,6 +493,12 @@ namespace YojigenShift.YiTestLab.UI
 				case "UI_MOD_QIMEN":
 					targetScene = QiMenScene;
 					break;
+				case "UI_MOD_LIUYAO":
+					targetScene = LiuYaoScene;
+					break;
+				case "UI_MOD_MEIHUA":
+					targetScene = MeiHuaScene;
+					break;
 				case "UI_MOD_WUXING":
 					targetScene = WuXingScene;
 					break;
@@ -502,7 +508,9 @@ namespace YojigenShift.YiTestLab.UI
 				case "UI_MOD_TRIGRAM":
 					targetScene = TrigramScene;
 					break;
-
+				case"UI_MOD_HEXAGRAM":
+					targetScene = HexagramScene;
+					break;
 			}
 
 			if (targetScene != null)

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bxbnu3lbuna2w"]
+
+[ext_resource type="Script" uid="uid://cf36ofmayywd3" path="res://Scripts/Modules/LiuyaoModule.cs" id="1_8cy5y"]
+
+[node name="LiuyaoModule" type="VBoxContainer" unique_id=234353863]
+script = ExtResource("1_8cy5y")

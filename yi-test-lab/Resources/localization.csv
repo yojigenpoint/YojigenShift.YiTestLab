@@ -6,7 +6,7 @@ MSG_CN_ONLY,该功能仅支持中文环境,This feature is only available in Chi
 MOD_WUXING,五行,Wu Xing
 MOD_GANZHI,干支,Stems & Branches
 MOD_BAZI,八字,Four Pillar
-MOD_NAMING,五行姓名学,Naming (CN)
+MOD_NAMING,五行姓名学,Naming (CN Only)
 MOD_TRIGRAM,八卦,Trigram
 MOD_QIMEN,奇门遁甲,Qi Men Dun Jia
 MOD_HEXAGRAM,六十四卦,Hexagrams
@@ -19,6 +19,7 @@ MOD_GANZHI_BRANCH_TITLE,地支,Earthly Branches
 MOD_BAZI_TITLE,八字排盘,Bazi Plotter
 MOD_TRIGRAM_TITLE,八卦,Trigrams
 MOD_QIMEN_TITLE,奇门遁甲,Qi Men Dun Jia
+MOD_HEXAGRAM_TITLE,六十四卦字典,Hexagram Dictionary
 MOD_WUXING_INFO_DEFAULT,选择五行进行分析……,Select on element to analyze...
 TXT_TIME_YEAR,年,Year
 TXT_TIME_MONTH,月,Month
@@ -60,3 +61,10 @@ TXT_TRIGRAM_EARLY,先天,Early
 TXT_TRIGRAM_LATER,后天,Later
 TXT_TRIGRAM_RESULT,[center][font_size=48]选择：[color=#{0}]{1}[/color][/font_size]\n[font_size=28]代表：{2} | 五行：{3}[/font_size]\n[font_size=24]先天数：{4} | 后天数：{5}[/font_size][/center],[center][font_size=48]Selected: [color=#{0}]{1}[/color][/font_size]\n[font_size=28]Nature: {2} | Element: {3}[/font_size]\n[font_size=24]Early Num: {4} | Later Num: {5}[/font_size][/center]
 TXT_QIMEN_INFO,{0}{1}局 | 巡首: {2} | 值符: {3} | 值使: {4},{0} Dun Ju {1} | Leader: {2} | ZhiFu: {3} | ZhiShi: {4}
+TXT_HEXAGRAM_SUBTITLE,选择八卦查看它们的组合。,Combine Trigrams to view their derived Hexagrams.
+TXT_HEXAGRAM_ORIGINAL,本卦,Original
+TXT_HEXAGRAM_MUTUAL,互卦,Mutual
+TXT_HEXAGRAM_INVERTED,错卦,Inverted
+TXT_HEXAGRAM_REVERSED,综卦,Reversed
+TXT_HEXAGRAM_UPPER,上/外卦,Upper Trigram
+TXT_HEXAGRAM_LOWER,下/内卦,Lower Trigram

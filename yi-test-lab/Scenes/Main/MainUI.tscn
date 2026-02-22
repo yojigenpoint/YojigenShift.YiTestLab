@@ -7,7 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://buu2m6jsd5lg4" path="res://Scenes/Modules/GanZhiModule.tscn" id="3_hd34p"]
 [ext_resource type="PackedScene" uid="uid://bdp6uttfn3e3a" path="res://Scenes/Modules/NamingModule.tscn" id="4_1mbqm"]
 [ext_resource type="PackedScene" uid="uid://2yr3nyg73tvl" path="res://Scenes/Modules/QimenModule.tscn" id="5_bmxyk"]
+[ext_resource type="PackedScene" uid="uid://bxbnu3lbuna2w" path="res://Scenes/Modules/LiuyaoModule.tscn" id="6_1qfoi"]
+[ext_resource type="PackedScene" uid="uid://dcvy5ep0mwf3m" path="res://Scenes/Modules/MeihuaModule.tscn" id="6_yhd45"]
 [ext_resource type="PackedScene" uid="uid://dethx7655wfjr" path="res://Scenes/Modules/BaguaModule.tscn" id="7_5iu5b"]
+[ext_resource type="PackedScene" uid="uid://kl13dn3ttjob" path="res://Scenes/Modules/HexagramModule.tscn" id="9_rtog5"]
 
 [node name="MainUI" type="Control" unique_id=1259651162]
 layout_mode = 3
@@ -21,6 +24,9 @@ TimeDialScene = ExtResource("2_2l5jr")
 BaziScene = ExtResource("2_6idxo")
 NamingScene = ExtResource("4_1mbqm")
 QiMenScene = ExtResource("5_bmxyk")
+LiuYaoScene = ExtResource("6_1qfoi")
+MeiHuaScene = ExtResource("6_yhd45")
 WuXingScene = ExtResource("2_hd34p")
 GanZhiScene = ExtResource("3_hd34p")
 TrigramScene = ExtResource("7_5iu5b")
+HexagramScene = ExtResource("9_rtog5")

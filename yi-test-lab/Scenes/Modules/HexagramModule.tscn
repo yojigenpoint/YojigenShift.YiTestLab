@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://kl13dn3ttjob"]
+
+[ext_resource type="Script" uid="uid://dkhsw3qv1n3ki" path="res://Scripts/Modules/HexagramModule.cs" id="1_88ckh"]
+
+[node name="HexagramModule" type="VBoxContainer" unique_id=474423417]
+script = ExtResource("1_88ckh")
